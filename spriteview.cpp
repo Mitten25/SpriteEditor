@@ -1,7 +1,7 @@
 #include "spriteview.h"
 #include "ui_spriteview.h"
 
-SpriteView::SpriteView(QWidget *parent) :
+SpriteView::SpriteView(Model& model, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::SpriteView)
 {

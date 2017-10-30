@@ -4,6 +4,7 @@
 #include <QAbstractTableModel>
 #include <QObject>
 #include <cstdlib>
+#include <QVector>
 #include "frame.h"
 
 
@@ -19,6 +20,14 @@ signals:
 public slots:
 
 private:
+    QVector<Frame> frames;
+    int fps;
+    QVariant data;
+    void saveFrame();
+    Frame loadFrame();
+    void exportGif();
+    int rowCount();
+    int columnCount();
 
 };
 
