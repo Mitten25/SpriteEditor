@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 #include <QTableWidget>
+#include <QPalette>
+#include <QColor>
 #include <QColorDialog>
 #include "model.h"
 
@@ -23,16 +25,21 @@ public:
 
 private slots:
     void on_colorButton_clicked();
-    void on_tableWidget_activated(const QModelIndex &index);
 
     void on_tableWidget_pressed(const QModelIndex &index);
 
     void on_tableWidget_clicked(const QModelIndex &index);
 
+    void on_tableWidget_cellEntered(int row, int column);
+
+    void on_eraseButton_clicked();
+
 private:
     Ui::SpriteView *ui;
 	QTableWidget* tableWidget;
+	int tableSize;
 	QColor activeColor;
+	void initTableItems(int size);
 	void setActiveColor(QColor color);
 	QColor getActiveColor();
 	
