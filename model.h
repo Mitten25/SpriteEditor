@@ -13,6 +13,7 @@ class Model : public QAbstractTableModel
 {
     Q_OBJECT
 public:
+	int spriteSize = SPRITE_SIZE;
     explicit Model(QAbstractTableModel *parent);
 
 signals:
@@ -23,7 +24,6 @@ public slots:
 private:
     QVector<Frame> frames;
 	int currFrame;
-	int spriteSize = SPRITE_SIZE;
 
     int fps;
     void saveFrame();

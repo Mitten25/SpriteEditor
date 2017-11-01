@@ -1,15 +1,16 @@
 #include "spriteview.h"
 #include "ui_spriteview.h"
 #include <QtDebug>
-#include <QItemDelegate>
-#include <QPainter>
 
 SpriteView::SpriteView(Model& model, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::SpriteView)
 {
     ui->setupUi(this);
-	ui->tableView->setModel( &model );
+	//ui->tableWidget->setModel( &model );
+	tableWidget = ui->tableWidget;
+	tableWidget->setRowCount(model.spriteSize);
+	tableWidget->setColumnCount(model.spriteSize);
 
 	QColor startColor("black");
 	ui->colorButton->setStyleSheet(COLOR_STYLE.arg(startColor.name()));
@@ -46,18 +47,18 @@ void SpriteView::on_colorButton_clicked()
 	//qDebug() << chosenColor.name();
 }
 
-void SpriteView::on_tableView_activated(const QModelIndex &index)
+void SpriteView::on_tableWidget_activated(const QModelIndex &index)
 {
 	qDebug() << index;
 }
 
-void SpriteView::on_tableView_pressed(const QModelIndex &index)
+void SpriteView::on_tableWidget_pressed(const QModelIndex &index)
 {
 	qDebug() << "press " << index;
 
 }
 
-void SpriteView::on_tableView_clicked(const QModelIndex &index)
+void SpriteView::on_tableWidget_clicked(const QModelIndex &index)
 {
 	qDebug() << "click " << index;
 

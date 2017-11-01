@@ -2,7 +2,7 @@
 #define SPRITEVIEW_H
 
 #include <QMainWindow>
-#include <QTableView>
+#include <QTableWidget>
 #include <QColorDialog>
 #include "model.h"
 
@@ -23,18 +23,18 @@ public:
 
 private slots:
     void on_colorButton_clicked();
-    void on_tableView_activated(const QModelIndex &index);
+    void on_tableWidget_activated(const QModelIndex &index);
 
-    void on_tableView_pressed(const QModelIndex &index);
+    void on_tableWidget_pressed(const QModelIndex &index);
 
-    void on_tableView_clicked(const QModelIndex &index);
+    void on_tableWidget_clicked(const QModelIndex &index);
 
 private:
     Ui::SpriteView *ui;
+	QTableWidget* tableWidget;
 	QColor activeColor;
 	void setActiveColor(QColor color);
 	QColor getActiveColor();
-    // int size;  // not sure what this is supposed to be used for
 	
     void update();
 };
