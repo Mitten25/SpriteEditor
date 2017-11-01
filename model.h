@@ -14,6 +14,8 @@ class Model : public QAbstractTableModel
     Q_OBJECT
 public:
     explicit Model(QAbstractTableModel *parent);
+    int rows;
+    int columns;
 
 signals:
 
@@ -25,10 +27,10 @@ private:
     void saveFrame();
     Frame loadFrame();
     void exportGif();
-
     int rowCount(const QModelIndex &parent = QModelIndex()) const ;
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+    QModelIndex index;
 
 
 };

@@ -17,7 +17,13 @@ public:
     explicit SpriteView(Model& model, QWidget *parent = 0);
     ~SpriteView();
 
+private slots:
+    void on_actionNew_triggered();
+
+    void on_okButton_clicked();
+
 private:
+    Model *spriteModel;
     Ui::SpriteView *ui;
     int size; //UML Diagram shows that size should be a 2D Array, doesnt seem right?
     // Update()
