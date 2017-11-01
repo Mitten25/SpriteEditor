@@ -7,7 +7,7 @@ class Frame
 {
 
 private:
-    QVector <std::tuple<int, int, int>> layers;
+    QVector <std::tuple<int, int, int, int>> layers;
     int height;
     int width;
 

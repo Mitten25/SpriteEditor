@@ -23,12 +23,12 @@ void Model::exportGif() {
 
 int Model::rowCount(const QModelIndex & /*parent*/) const
 {
-   return 2;
+   return 5;
 }
 
 int Model::columnCount(const QModelIndex & /*parent*/) const
 {
-    return 3;
+    return 5;
 }
 
 QVariant Model::data(const QModelIndex &index, int role) const
