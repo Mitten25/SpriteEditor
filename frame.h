@@ -1,7 +1,7 @@
 #ifndef FRAME_H
 #define FRAME_H
-#include<QVector>
-#include<tuple>
+#include <QVector>
+#include <tuple>
 
 class Frame
 {

@@ -20,7 +20,6 @@ public:
 private:
     Ui::SpriteView *ui;
     int size; //UML Diagram shows that size should be a 2D Array, doesnt seem right?
-    QTableView tableview;
     // Update()
     // Updated is commented out due to unknown return type.
 };

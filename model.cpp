@@ -3,33 +3,43 @@
 
 Model::Model(QAbstractTableModel *parent) : QAbstractTableModel(parent)
 {
+
 }
 
 
-void saveFrame() {
+void Model::saveFrame() {
     //To be implemented
 }
 
-Frame loadFrame() {
+Frame Model::loadFrame() {
     //To be implemented
     Frame placeholder;
     return placeholder;
 }
 
-void exportGif() {
+void Model::exportGif() {
     //To be implemented
 }
 
-int rowCount() {
-    //To be implemented
-    return 0;
+int Model::rowCount(const QModelIndex & /*parent*/) const
+{
+   return 2;
 }
 
-int columnCount() {
-    //To be implemented
-    return 0;
+int Model::columnCount(const QModelIndex & /*parent*/) const
+{
+    return 3;
 }
 
-
+QVariant Model::data(const QModelIndex &index, int role) const
+{
+    if (role == Qt::DisplayRole)
+    {
+       return QString("Row%1, Column%2")
+                   .arg(index.row() + 1)
+                   .arg(index.column() +1);
+    }
+    return QVariant();
+}
 
 

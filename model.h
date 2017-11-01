@@ -13,7 +13,7 @@ class Model : public QAbstractTableModel
 {
     Q_OBJECT
 public:
-    explicit Model(QAbstractTableModel *parent = Q_NULLPTR);
+    explicit Model(QAbstractTableModel *parent);
 
 signals:
 
@@ -22,12 +22,14 @@ public slots:
 private:
     QVector<Frame> frames;
     int fps;
-    QVariant data;
     void saveFrame();
     Frame loadFrame();
     void exportGif();
-    int rowCount();
-    int columnCount();
+
+    int rowCount(const QModelIndex &parent = QModelIndex()) const ;
+    int columnCount(const QModelIndex &parent = QModelIndex()) const;
+    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+
 
 };
 
