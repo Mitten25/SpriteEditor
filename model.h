@@ -21,7 +21,7 @@ signals:
 	void editCompleted(const QString &);
 
 public slots:
-    void getTable(QTableWidget);
+//    void getTable(QTableWidget);
 
 private:
     QVector<Frame> frames;

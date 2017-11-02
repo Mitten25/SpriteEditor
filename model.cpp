@@ -38,10 +38,10 @@ Frame Model::loadFrame()
     return placeholder;
 }
 
-void Model::getTable(QTableWidget table)
-{
-    currentTable = &table;
-}
+//void Model::getTable(QTableWidget table)
+//{
+//    currentTable = &table;
+//}
 
 void Model::exportGif() 
 {
