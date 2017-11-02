@@ -42,9 +42,6 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
     //        this, SLOT(drawSequence(std::pair<int, std::vector<int> >)));
 
 
-    connect(ui->heightBox, SIGNAL(valueChanged(int)), &model, SLOT(checkRow(int)));
-    connect(ui->widthBox, SIGNAL(valueChanged(int)), &model, SLOT(checkCol(int)));
-
 
 }
 
@@ -92,13 +89,13 @@ void SpriteView::on_colorButton_clicked()
 
 void SpriteView::on_tableWidget_pressed(const QModelIndex &index)
 {
-	qDebug() << "press " << index;
+    //qDebug() << "press " << index;
 
 }
 
 void SpriteView::on_tableWidget_clicked(const QModelIndex &index)
 {
-	qDebug() << "click " << index;
+    //qDebug() << "click " << index;
 
 }
 
@@ -117,8 +114,8 @@ void SpriteView::on_eraseButton_clicked()
 void SpriteView::on_okButton_clicked()
 {
    ui->frame->setVisible(false);
-   ui->tableWidget->setColumnCount(10);
-   ui->tableWidget->setRowCount(10);
+   ui->tableWidget->setColumnCount(ui->heightBox->value());
+   ui->tableWidget->setRowCount(ui->widthBox->value());
 }
 
 void SpriteView::on_actionNew_File_triggered()
