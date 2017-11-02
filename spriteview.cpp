@@ -21,7 +21,7 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
 	QColor startColor("black");
 	ui->colorButton->setStyleSheet(COLOR_STYLE.arg(startColor.name()));
 	activeColor = startColor;
-    initTableItems(0);
+    //initTableItems(0);
 
 	// TODO: we should probably set up more signals and slots so that
 	// the model can control more
@@ -45,12 +45,12 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
 
 }
 
-void SpriteView::initTableItems(int size) 
+void SpriteView::initTableItems(int row, int column)
 {
-	tableWidget->setRowCount(size);
-	tableWidget->setColumnCount(size);
-	for (int r = 0; r < size; r++) {
-		for (int c = 0; c < size; c++) {
+    tableWidget->setRowCount(row);
+    tableWidget->setColumnCount(column);
+    for (int r = 0; r < row; r++) {
+        for (int c = 0; c < column; c++) {
 			tableWidget->setItem(r, c, new QTableWidgetItem);
 			//TODO: set to alpha = 0
 		}
@@ -114,8 +114,7 @@ void SpriteView::on_eraseButton_clicked()
 void SpriteView::on_okButton_clicked()
 {
    ui->frame->setVisible(false);
-   ui->tableWidget->setColumnCount(ui->heightBox->value());
-   ui->tableWidget->setRowCount(ui->widthBox->value());
+   initTableItems(ui->heightBox->value(), ui->widthBox->value());
 }
 
 void SpriteView::on_actionNew_File_triggered()

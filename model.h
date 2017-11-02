@@ -9,12 +9,12 @@
 
 const int SPRITE_SIZE = 32;
 
-class Model : public QAbstractTableModel
+class Model : QObject
 {
     Q_OBJECT
 public:
 	int spriteSize = SPRITE_SIZE;
-    explicit Model(QAbstractTableModel *parent);
+    explicit Model(QObject *parent);
 
 signals:
 	void editCompleted(const QString &);

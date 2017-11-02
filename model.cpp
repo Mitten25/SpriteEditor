@@ -1,7 +1,7 @@
 #include "model.h"
 
 
-Model::Model(QAbstractTableModel *parent) : QAbstractTableModel(parent)
+Model::Model(QObject *parent) : QObject (parent)
 {
 
 }

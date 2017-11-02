@@ -43,7 +43,7 @@ private:
 	QTableWidget* tableWidget;
 	int tableSize;
 	QColor activeColor;
-	void initTableItems(int size);
+    void initTableItems(int, int);
 	void setActiveColor(QColor color);
 	QColor getActiveColor();
 	
