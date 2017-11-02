@@ -7,7 +7,7 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-	// TODO: add back this line (was failing compile)
+	// we can add this back. it was just failing to compile
     //QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
     Model m(0);

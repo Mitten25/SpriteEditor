@@ -2,8 +2,14 @@
 #define SPRITEVIEW_H
 
 #include <QMainWindow>
-#include <QTableView>
+#include <QTableWidget>
+#include <QPalette>
+#include <QColor>
+#include <QColorDialog>
 #include "model.h"
+
+const QString COLOR_STYLE("QPushButton { background-color : %1; }");
+
 
 namespace Ui {
 class SpriteView;
@@ -18,16 +24,26 @@ public:
     ~SpriteView();
 
 private slots:
-    void on_actionNew_triggered();
+    void on_colorButton_clicked();
 
-    void on_okButton_clicked();
+    void on_tableWidget_pressed(const QModelIndex &index);
+
+    void on_tableWidget_clicked(const QModelIndex &index);
+
+    void on_tableWidget_cellEntered(int row, int column);
+
+    void on_eraseButton_clicked();
 
 private:
-    Model *spriteModel;
     Ui::SpriteView *ui;
-    int size; //UML Diagram shows that size should be a 2D Array, doesnt seem right?
-    // Update()
-    // Updated is commented out due to unknown return type.
+	QTableWidget* tableWidget;
+	int tableSize;
+	QColor activeColor;
+	void initTableItems(int size);
+	void setActiveColor(QColor color);
+	QColor getActiveColor();
+	
+    void update();
 };
 
 #endif // SPRITEVIEW_H

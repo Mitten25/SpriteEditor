@@ -7,49 +7,59 @@ Model::Model(QAbstractTableModel *parent) : QAbstractTableModel(parent)
 }
 
 
-void Model::saveFrame() {
-    //To be implemented
+
+void Model::saveFrame() 
+{
+    // TODO: 
 }
 
-Frame Model::loadFrame() {
-    //To be implemented
+Frame Model::loadFrame() 
+{
+    // TODO: 
     Frame placeholder;
     return placeholder;
 }
 
-void Model::exportGif() {
-    //To be implemented
+void Model::exportGif() 
+{
+    // TODO: 
 }
-
-void Model::checkCol(int col) {
-    this->columns_ = col;
-}
-
-void Model::checkRow(int row) {
-    this->rows_ = row;
-}
-
-
 
 int Model::rowCount(const QModelIndex & /*parent*/) const
 {
-   return rows_;
+   return spriteSize;
 }
 
 int Model::columnCount(const QModelIndex & /*parent*/) const
 {
-    return columns_;
+    return spriteSize;
 }
 
 QVariant Model::data(const QModelIndex &index, int role) const
 {
     if (role == Qt::DisplayRole)
     {
-       return QString("Row%1, Column%2")
+       return QString("%1, %2")
                    .arg(index.row() + 1)
                    .arg(index.column() +1);
     }
     return QVariant();
 }
+
+bool Model::setData(const QModelIndex & index, const QVariant & value, int role)
+{
+    if (role == Qt::EditRole)
+    {
+        QString result = value.toString();
+        emit editCompleted( result );
+    }
+    return true;
+}
+
+Qt::ItemFlags Model::flags(const QModelIndex & /*index*/) const
+{
+    return Qt::ItemIsSelectable |  Qt::ItemIsEditable | Qt::ItemIsEnabled ;
+}
+
 
 
