@@ -34,6 +34,10 @@ private slots:
 
     void on_eraseButton_clicked();
 
+    void on_okButton_clicked();
+
+    void on_actionNew_File_triggered();
+
 private:
     Ui::SpriteView *ui;
 	QTableWidget* tableWidget;

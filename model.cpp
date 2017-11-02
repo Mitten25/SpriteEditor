@@ -25,16 +25,6 @@ void Model::exportGif()
     // TODO: 
 }
 
-int Model::rowCount(const QModelIndex & /*parent*/) const
-{
-   return spriteSize;
-}
-
-int Model::columnCount(const QModelIndex & /*parent*/) const
-{
-    return spriteSize;
-}
-
 QVariant Model::data(const QModelIndex &index, int role) const
 {
     if (role == Qt::DisplayRole)
@@ -46,6 +36,7 @@ QVariant Model::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
+
 bool Model::setData(const QModelIndex & index, const QVariant & value, int role)
 {
     if (role == Qt::EditRole)
@@ -55,6 +46,7 @@ bool Model::setData(const QModelIndex & index, const QVariant & value, int role)
     }
     return true;
 }
+
 
 Qt::ItemFlags Model::flags(const QModelIndex & /*index*/) const
 {

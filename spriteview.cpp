@@ -11,6 +11,7 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
     ui->setupUi(this);
 	//ui->tableWidget->setModel( &model );
 	tableWidget = ui->tableWidget;
+    ui->frame->setVisible(false);
 
 	//QPalette palette = tableWidget->palette();
 	//palette.setBrush(QPalette::Highlight,QBrush(Qt::white));
@@ -20,8 +21,7 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
 	QColor startColor("black");
 	ui->colorButton->setStyleSheet(COLOR_STYLE.arg(startColor.name()));
 	activeColor = startColor;
-	int size = model.spriteSize;
-	initTableItems(size);
+    initTableItems(0);
 
 	// TODO: we should probably set up more signals and slots so that
 	// the model can control more
@@ -41,6 +41,9 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
     //connect(&simonGame, SIGNAL(sendSequence(std::pair<int, std::vector<int> >)),
     //        this, SLOT(drawSequence(std::pair<int, std::vector<int> >)));
 
+
+    connect(ui->heightBox, SIGNAL(valueChanged(int)), &model, SLOT(checkRow(int)));
+    connect(ui->widthBox, SIGNAL(valueChanged(int)), &model, SLOT(checkCol(int)));
 
 
 }
@@ -108,5 +111,17 @@ void SpriteView::on_tableWidget_cellEntered(int row, int column)
 void SpriteView::on_eraseButton_clicked()
 {
 	setActiveColor(QColor(0, 0, 0, 0));
+}
 
+
+void SpriteView::on_okButton_clicked()
+{
+   ui->frame->setVisible(false);
+   ui->tableWidget->setColumnCount(10);
+   ui->tableWidget->setRowCount(10);
+}
+
+void SpriteView::on_actionNew_File_triggered()
+{
+   ui->frame->setVisible(true);
 }
