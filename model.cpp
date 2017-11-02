@@ -21,14 +21,24 @@ void Model::exportGif() {
     //To be implemented
 }
 
+void Model::checkCol(int col) {
+    this->columns_ = col;
+}
+
+void Model::checkRow(int row) {
+    this->rows_ = row;
+}
+
+
+
 int Model::rowCount(const QModelIndex & /*parent*/) const
 {
-   return rows;
+   return rows_;
 }
 
 int Model::columnCount(const QModelIndex & /*parent*/) const
 {
-    return columns;
+    return columns_;
 }
 
 QVariant Model::data(const QModelIndex &index, int role) const

@@ -14,12 +14,14 @@ class Model : public QAbstractTableModel
     Q_OBJECT
 public:
     explicit Model(QAbstractTableModel *parent);
-    int rows;
-    int columns;
+    int rows_;
+    int columns_;
 
 signals:
 
 public slots:
+    void checkRow(int);
+    void checkCol(int);
 
 private:
     QVector<Frame> frames;

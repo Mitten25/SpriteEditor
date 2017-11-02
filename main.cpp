@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
 
     Model m(0);
     SpriteView w(m);
-	w.showMaximized();
+    w.show();
 
     return a.exec();
 }

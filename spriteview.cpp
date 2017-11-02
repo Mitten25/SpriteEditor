@@ -8,6 +8,8 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
     spriteModel = &model;
     ui->setupUi(this);
     ui->frame->setVisible(false);
+    connect(ui->spinBox, SIGNAL(valueChanged(int)), &model, SLOT(checkRow(int)));
+    connect(ui->spinBox_2, SIGNAL(valueChanged(int)), &model, SLOT(checkCol(int)));
 }
 
 SpriteView::~SpriteView()
@@ -21,8 +23,10 @@ void SpriteView::on_actionNew_triggered()
 }
 void SpriteView::on_okButton_clicked()
 {
-    spriteModel->rows = 5;
-    spriteModel->columns = 5;
+
+    //connect(ui->spinBox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), &spriteModel, &Model::checkCol);
+    //spriteModel->rows_ = ui->spinBox->value();
+    // spriteModel->columns_ = ui->spinBox_2->value();
     ui->tableView->setModel( spriteModel );
     ui->tableView->show();
     ui->frame->setVisible(false);
