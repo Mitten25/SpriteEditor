@@ -1,23 +1,46 @@
 #include "model.h"
 
-
 Model::Model(QObject *parent) : QObject (parent)
 {
 
 }
 
-
-
-void Model::saveFrame() 
+void Model::newFrame()
 {
-    // TODO: 
+    Frame temp;
+    frames.push_back(temp);
+    currFrame = frames.size() - 1;
 }
 
-Frame Model::loadFrame() 
+void Model::saveFrame()
+{
+    // TODO:
+    int row = currentTable->rowCount();
+    int column = currentTable->columnCount();
+    QVector<QVector<std::tuple<int, int, int, int>>> temp;
+
+    for (int r = 0; r < row; r++) {
+        for (int c = 0; c < column; c++) {
+            QColor color = currentTable->itemAt(r, c)->backgroundColor();
+            std::tuple<int,int,int,int> mytuple (color.red(), color.green(), color.blue(), color.alpha());
+            temp[r][c] = mytuple;
+        }
+    }
+    if (frames[currFrame].pixels.size() == 0)
+        frames[currFrame].pixels = temp;
+    //need else for layer number
+}
+
+Frame Model::loadFrame()
 {
     // TODO: 
     Frame placeholder;
     return placeholder;
+}
+
+void Model::getTable(QTableWidget table)
+{
+    currentTable = &table;
 }
 
 void Model::exportGif() 

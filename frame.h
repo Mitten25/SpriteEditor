@@ -7,12 +7,11 @@ class Frame
 {
 
 private:
-    QVector <std::tuple<int, int, int, int>> layers;
     int height;
     int width;
 
-
 public:
+    QVector <QVector<std::tuple<int, int, int, int>>> pixels;
     Frame();
     std::tuple<int, int, int, int> getPixel();
     void setPixel(std::tuple <int, int, int, int>);

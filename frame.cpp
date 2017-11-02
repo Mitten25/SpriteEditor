@@ -1,8 +1,10 @@
 #include "frame.h"
 
 using namespace std;
+
 Frame::Frame()
 {
+
 }
 
 tuple<int, int, int, int> Frame::getPixel() {

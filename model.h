@@ -1,10 +1,11 @@
 #ifndef MODEL_H
 #define MODEL_H
 
-#include <QAbstractTableModel>
+#include <QTableWidget>
 #include <QObject>
 #include <cstdlib>
 #include <QVector>
+#include <tuple>
 #include "frame.h"
 
 const int SPRITE_SIZE = 32;
@@ -20,13 +21,16 @@ signals:
 	void editCompleted(const QString &);
 
 public slots:
+    void getTable(QTableWidget);
 
 private:
     QVector<Frame> frames;
-	int currFrame;
+    int currFrame;
+    QTableWidget *currentTable;
 
 
     int fps;
+    void newFrame();
     void saveFrame();
     Frame loadFrame();
     void exportGif();
