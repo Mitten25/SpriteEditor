@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>973</width>
-    <height>683</height>
+    <width>913</width>
+    <height>726</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -185,7 +185,7 @@
      </item>
     </layout>
    </widget>
-   <widget class="QPushButton" name="pushButton_2">
+   <widget class="QPushButton" name="dropButton">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -211,7 +211,7 @@
      <string>Eraser</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_3">
+   <widget class="QPushButton" name="bucketButton">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -240,8 +240,8 @@
    <widget class="QFrame" name="frame">
     <property name="geometry">
      <rect>
-      <x>750</x>
-      <y>220</y>
+      <x>700</x>
+      <y>250</y>
       <width>211</width>
       <height>251</height>
      </rect>
@@ -263,7 +263,7 @@
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <item row="0" column="0">
-       <widget class="QLabel" name="label">
+       <widget class="QLabel" name="sizeLabel">
         <property name="sizePolicy">
          <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
           <horstretch>0</horstretch>
@@ -276,7 +276,7 @@
        </widget>
       </item>
       <item row="1" column="0">
-       <widget class="QLabel" name="label_2">
+       <widget class="QLabel" name="widthLabel">
         <property name="sizePolicy">
          <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
           <horstretch>0</horstretch>
@@ -289,7 +289,7 @@
        </widget>
       </item>
       <item row="2" column="0">
-       <widget class="QLabel" name="label_3">
+       <widget class="QLabel" name="heightLabel">
         <property name="sizePolicy">
          <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
           <horstretch>0</horstretch>
@@ -363,14 +363,37 @@
      </layout>
     </widget>
    </widget>
+   <widget class="QTableWidget" name="framesTable">
+    <property name="geometry">
+     <rect>
+      <x>700</x>
+      <y>40</y>
+      <width>91</width>
+      <height>91</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="addFrameButton">
+    <property name="geometry">
+     <rect>
+      <x>700</x>
+      <y>140</y>
+      <width>91</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Add Frame</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>973</width>
-     <height>19</height>
+     <width>913</width>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuSprite_Editor">

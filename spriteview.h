@@ -38,6 +38,10 @@ private slots:
 
     void on_actionNew_File_triggered();
 
+    void saveFile();
+
+    void loadFile();
+
 private:
     Ui::SpriteView *ui;
 	QTableWidget* tableWidget;
