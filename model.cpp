@@ -15,19 +15,7 @@ void Model::newFrame()
 void Model::saveFrame()
 {
     // TODO:
-    int row = currentTable->rowCount();
-    int column = currentTable->columnCount();
-    QVector<QVector<std::tuple<int, int, int, int>>> temp;
 
-    for (int r = 0; r < row; r++) {
-        for (int c = 0; c < column; c++) {
-            QColor color = currentTable->itemAt(r, c)->backgroundColor();
-            std::tuple<int,int,int,int> mytuple (color.red(), color.green(), color.blue(), color.alpha());
-            temp[r][c] = mytuple;
-        }
-    }
-    if (frames[currFrame].pixels.size() == 0)
-        frames[currFrame].pixels = temp;
     //need else for layer number
 }
 

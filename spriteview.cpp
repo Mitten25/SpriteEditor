@@ -116,9 +116,22 @@ void SpriteView::initTableItems(int row, int column)
 	}
 }
 
-void SpriteView::update() 
+QVector<QVector<std::tuple<int, int, int, int>>> SpriteView::getFrame()
 {
+    int row = tableWidget->rowCount();
+    int column = tableWidget->columnCount();
+    QVector<QVector<std::tuple<int, int, int, int>>> temp;
 
+    for (int r = 0; r < row; r++) {
+        for (int c = 0; c < column; c++) {
+            QColor color = tableWidget->itemAt(r, c)->backgroundColor();
+            std::tuple<int,int,int,int> mytuple (color.red(), color.green(), color.blue(), color.alpha());
+            temp[r][c] = mytuple;
+        }
+    }
+    //if (frames[currFrame].pixels.size() == 0)
+    //    frames[currFrame].pixels = temp;
+    return temp;
 }
 
 SpriteView::~SpriteView()
@@ -174,6 +187,8 @@ void SpriteView::on_okButton_clicked()
    ui->frame->setVisible(false);
    initTableItems(ui->heightBox->value(), ui->widthBox->value());
 }
+
+
 
 void SpriteView::on_actionNew_File_triggered()
 {

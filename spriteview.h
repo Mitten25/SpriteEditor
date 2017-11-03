@@ -7,6 +7,7 @@
 #include <QColor>
 #include <QColorDialog>
 #include "model.h"
+#include "frame.h"
 
 const QString COLOR_STYLE("QPushButton { background-color : %1; }");
 
@@ -51,7 +52,7 @@ private:
 	void setActiveColor(QColor color);
 	QColor getActiveColor();
 	
-    void update();
+    QVector<QVector<std::tuple<int, int, int, int>>> getFrame();
 };
 
 #endif // SPRITEVIEW_H
