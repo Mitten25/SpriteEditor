@@ -146,7 +146,8 @@ void SpriteView::initFrameItem(QTableWidget *newFrame)
 {
     int rows = ui->heightBox->value();
     int columns = ui->widthBox->value();
-
+    int itemSizeD = rows;
+    if(rows < columns){itemSizeD = columns;}
     //initialize items in table
     newFrame->verticalHeader()->setVisible(false);
     newFrame->horizontalHeader()->setVisible(false);
@@ -156,8 +157,8 @@ void SpriteView::initFrameItem(QTableWidget *newFrame)
         for (int c = 0; c < columns; c++) {
             QTableWidgetItem *newItem = new QTableWidgetItem();
             newFrame->setItem(r, c, newItem);
-            newFrame->verticalHeader()->resizeSection(r, 100/rows);
-            newFrame->horizontalHeader()->resizeSection(c, 100/columns);
+            newFrame->verticalHeader()->resizeSection(r, 100/itemSizeD);
+            newFrame->horizontalHeader()->resizeSection(c, 100/itemSizeD);
             //disable selecting and editing cells
             newFrame->setEditTriggers(QAbstractItemView::NoEditTriggers);
             newFrame->setFocusPolicy(Qt::NoFocus);
