@@ -43,15 +43,21 @@ private slots:
 
     void loadFile();
 
+    void on_addFrameButton_clicked();
+
 private:
     Ui::SpriteView *ui;
-	QTableWidget* tableWidget;
-	int tableSize;
-	QColor activeColor;
+    QTableWidget* tableWidget;
+    int tableSize;
+    QColor activeColor;
+    int frameCount;
+    int currentFrameNum;
     void initTableItems(int, int);
-	void setActiveColor(QColor color);
-	QColor getActiveColor();
-	
+    void initNewFrame();
+    void initFrameItem(QTableWidget *newFrame);
+    void setActiveColor(QColor color);
+    QColor getActiveColor();
+
     QVector<QVector<std::tuple<int, int, int, int>>> getFrame();
 };
 

@@ -4,29 +4,32 @@
 #include <QFileDialog>
 #include <QFile>
 #include <QMessageBox>
-
+#include <iostream>
+using namespace std;
 
 SpriteView::SpriteView(Model& model, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::SpriteView)
 {
     ui->setupUi(this);
-	//ui->tableWidget->setModel( &model );
-	tableWidget = ui->tableWidget;
+    //ui->tableWidget->setModel( &model );
+    tableWidget = ui->tableWidget;
     ui->frame->setVisible(false);
 
-	//QPalette palette = tableWidget->palette();
-	//palette.setBrush(QPalette::Highlight,QBrush(Qt::white));
-	//palette.setBrush(QPalette::HighlightedText,QBrush(Qt::black));
-	//tableWidget->setPalette(palette);
+    //QPalette palette = tableWidget->palette();
+    //palette.setBrush(QPalette::Highlight,QBrush(Qt::white));
+    //palette.setBrush(QPalette::HighlightedText,QBrush(Qt::black));
+    //tableWidget->setPalette(palette);
 
-	QColor startColor("black");
-	ui->colorButton->setStyleSheet(COLOR_STYLE.arg(startColor.name()));
-	activeColor = startColor;
+    QColor startColor("black");
+    ui->colorButton->setStyleSheet(COLOR_STYLE.arg(startColor.name()));
+    activeColor = startColor;
+    frameCount = 0;
+    currentFrameNum = 0;
     //initTableItems(0);
 
-	// TODO: we should probably set up more signals and slots so that
-	// the model can control more
+    // TODO: we should probably set up more signals and slots so that
+    // the model can control more
 
     //connect(this, SIGNAL(startGame ()),
     //        &simonGame, SLOT(setSequence()));
@@ -42,6 +45,10 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
 
     //connect(&simonGame, SIGNAL(sendSequence(std::pair<int, std::vector<int> >)),
     //        this, SLOT(drawSequence(std::pair<int, std::vector<int> >)));
+
+    //
+    //connect(ui->addFrameButton, &QPushButton::clicked, &model, &Model::newFrame);
+    //
 
     connect(ui->actionSave_File, SIGNAL(triggered(bool)), this, SLOT(saveFile()));
     connect(ui->actionLoad_File, SIGNAL(triggered(bool)), this, SLOT(loadFile()));
@@ -111,11 +118,50 @@ void SpriteView::initTableItems(int row, int column)
     for (int r = 0; r < row; r++) {
         for (int c = 0; c < column; c++) {
             tableWidget->setItem(r, c, new QTableWidgetItem);
-			//TODO: set to alpha = 0
-		}
-	}
+            //TODO: set to alpha = 0
+        }
+    }
 }
 
+//creates and initializes a new frame in central widget
+void SpriteView::initNewFrame()
+{
+    QTableWidgetItem *newRow = new QTableWidgetItem();
+    ui->framesTable->setRowCount(frameCount+1);
+    ui->framesTable->setColumnCount(1);
+    ui->framesTable->setItem(frameCount+1,1, newRow);
+    ui->framesTable->verticalHeader()->resizeSection(frameCount, 125);
+    ui->framesTable->horizontalHeader()->resizeSection(frameCount, 200);
+    ui->framesTable->horizontalHeader()->setVisible(false);
+    QTableWidget *newFrame = new QTableWidget();
+    newFrame->setObjectName("tableWidget"+QString::number(frameCount));
+
+    initFrameItem(newFrame);
+
+    ui->framesTable->setCellWidget(frameCount,0,newFrame);
+    frameCount++;
+}
+
+void SpriteView::initFrameItem(QTableWidget *newFrame)
+{
+    //initialize items in table
+    newFrame->verticalHeader()->setVisible(false);
+    newFrame->horizontalHeader()->setVisible(false);
+    newFrame->setRowCount(ui->heightBox->value());
+    newFrame->setColumnCount(ui->widthBox->value());
+    for (int r = 0; r < ui->heightBox->value(); r++) {
+        for (int c = 0; c < ui->widthBox->value(); c++) {
+            QTableWidgetItem *newItem = new QTableWidgetItem();
+            newFrame->setItem(r, c, newItem);
+            newFrame->verticalHeader()->resizeSection(r, 20);
+            newFrame->horizontalHeader()->resizeSection(c, 20);
+            //disable selecting and editing cells
+            newFrame->setEditTriggers(QAbstractItemView::NoEditTriggers);
+            newFrame->setFocusPolicy(Qt::NoFocus);
+            newFrame->setSelectionMode(QAbstractItemView::NoSelection);
+        }
+    }
+}
 QVector<QVector<std::tuple<int, int, int, int>>> SpriteView::getFrame()
 {
     int row = tableWidget->rowCount();
@@ -139,23 +185,23 @@ SpriteView::~SpriteView()
     delete ui;
 }
 
-void SpriteView::setActiveColor(QColor color) 
+void SpriteView::setActiveColor(QColor color)
 {
-	activeColor = color;
-	ui->colorButton->setStyleSheet(COLOR_STYLE.arg(activeColor.name()));
-	ui->colorButton->setAutoFillBackground(true);
-	ui->colorButton->setFlat(true);
+    activeColor = color;
+    ui->colorButton->setStyleSheet(COLOR_STYLE.arg(activeColor.name()));
+    ui->colorButton->setAutoFillBackground(true);
+    ui->colorButton->setFlat(true);
 }
 
 
 void SpriteView::on_colorButton_clicked()
 {
-	QColor chosenColor = QColorDialog::getColor();
-	// if user didn't cancel the dialog, set the color to the chosen
-	if (chosenColor.isValid()) {
-		setActiveColor(chosenColor);
-	}
-	//qDebug() << chosenColor.name();
+    QColor chosenColor = QColorDialog::getColor();
+    // if user didn't cancel the dialog, set the color to the chosen
+    if (chosenColor.isValid()) {
+        setActiveColor(chosenColor);
+    }
+    //qDebug() << chosenColor.name();
 }
 
 
@@ -173,8 +219,9 @@ void SpriteView::on_tableWidget_clicked(const QModelIndex &index)
 
 void SpriteView::on_tableWidget_cellEntered(int row, int column)
 {
-	tableWidget->item(row, column)->setBackground(activeColor);
-
+    tableWidget->item(row, column)->setBackground(activeColor);
+    QTableWidget *cframe = this->findChild<QTableWidget *>("tableWidget"+QString::number(frameCount-1));
+    cframe->item(row,column)->setBackground(activeColor);
 }
 
 void SpriteView::on_eraseButton_clicked()
@@ -186,6 +233,7 @@ void SpriteView::on_okButton_clicked()
 {
    ui->frame->setVisible(false);
    initTableItems(ui->heightBox->value(), ui->widthBox->value());
+   initNewFrame();
 }
 
 
@@ -193,4 +241,9 @@ void SpriteView::on_okButton_clicked()
 void SpriteView::on_actionNew_File_triggered()
 {
    ui->frame->setVisible(true);
+}
+
+void SpriteView::on_addFrameButton_clicked()
+{
+    initNewFrame();
 }
