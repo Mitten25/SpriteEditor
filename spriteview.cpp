@@ -46,6 +46,11 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
     connect(ui->actionSave_File, SIGNAL(triggered(bool)), this, SLOT(saveFile()));
     connect(ui->actionLoad_File, SIGNAL(triggered(bool)), this, SLOT(loadFile()));
 
+    //Layers
+    connect(&model, SIGNAL(&model::addLayer()), this, SLOT(addLayer(int)));
+    connect(&model, SIGNAL(&model::deleteLayer()), this, SLOT(deleteLayer(int)));
+
+
 }
 
 void SpriteView::saveFile()
@@ -193,4 +198,14 @@ void SpriteView::on_okButton_clicked()
 void SpriteView::on_actionNew_File_triggered()
 {
    ui->frame->setVisible(true);
+}
+
+void SpriteView::deleteLayer(int row)
+{
+    ui->LayersTable->removeCellWidget(row, 0);
+}
+
+void SpriteView::addLayer(int row)
+{
+    ui->LayersTable->setItem(ui->LayersTable->rowCount(), 0, new QTableWidgetItem);
 }

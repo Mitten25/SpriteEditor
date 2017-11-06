@@ -19,12 +19,12 @@ void Model::saveFrame()
     //need else for layer number
 }
 
-Frame Model::loadFrame()
-{
+//Frame Model::loadFrame()
+//{
     // TODO: 
-    Frame placeholder;
-    return placeholder;
-}
+//    Frame placeholder;
+//    return placeholder;
+//}
 
 //void Model::getTable(QTableWidget table)
 //{
@@ -62,6 +62,16 @@ bool Model::setData(const QModelIndex & index, const QVariant & value, int role)
 Qt::ItemFlags Model::flags(const QModelIndex & /*index*/) const
 {
     return Qt::ItemIsSelectable |  Qt::ItemIsEditable | Qt::ItemIsEnabled ;
+}
+
+void Model::addLayer()
+{
+    emit addLayerSig(frames[currFrame].addLayer());
+}
+
+void Model::deleteLayer()
+{
+    emit deleteLayerSig(frames[currFrame].deleteLayer());
 }
 
 

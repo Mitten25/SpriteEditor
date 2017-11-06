@@ -4,7 +4,7 @@ using namespace std;
 
 Frame::Frame()
 {
-
+    currLayer = 0;
 }
 
 tuple<int, int, int, int> Frame::getPixel() {
@@ -14,5 +14,13 @@ tuple<int, int, int, int> Frame::getPixel() {
 }
 
 void Frame::setPixel(tuple <int, int, int, int>) {
+    //To be implemented
+}
+
+int Frame::deleteLayer() {
+    //To be implemented
+}
+
+int Frame::addLayer() {
     //To be implemented
 }

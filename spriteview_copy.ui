@@ -264,16 +264,16 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="AddLayer">
+       <widget class="QPushButton" name="AddFrame">
         <property name="text">
-         <string>Add Layer</string>
+         <string>Add Frame</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="DeleteLayer">
+       <widget class="QPushButton" name="DeleteFrame">
         <property name="text">
-         <string>Delete Layer</string>
+         <string>Delete Frame</string>
         </property>
        </widget>
       </item>

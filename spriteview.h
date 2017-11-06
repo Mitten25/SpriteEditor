@@ -43,6 +43,10 @@ private slots:
 
     void loadFile();
 
+    void addLayer(int row);
+
+    void deleteLayer(int row);
+
 private:
     Ui::SpriteView *ui;
 	QTableWidget* tableWidget;

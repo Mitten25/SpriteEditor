@@ -33,7 +33,8 @@ SOURCES += \
 HEADERS += \
         spriteview.h \
     model.h \
-    frame.h
+    frame.h \
+    grid.h
 
 FORMS += \
         spriteview.ui
