@@ -10,7 +10,7 @@
 
 const int SPRITE_SIZE = 32;
 
-class Model : QObject
+class Model : public QObject
 {
     Q_OBJECT
 public:
@@ -22,15 +22,15 @@ signals:
 
 public slots:
 //    void getTable(QTableWidget);
-
+    void newFrame();
+    void outputFramesData(QVector<QVector<std::tuple<int,int,int,int>>> data);
 private:
     QVector<Frame> frames;
     int currFrame;
     QTableWidget *currentTable;
-
+    int pixelCount;
 
     int fps;
-    void newFrame();
     void saveFrame();
     Frame loadFrame();
     void exportGif();
