@@ -5,22 +5,6 @@ Model::Model(QObject *parent) : QObject (parent)
 
 }
 
-void Model::updateTableColor(int row, int column)
-{
-   // currentTable->item()
-}
-
-void Model::outputFramesData(QVector<QVector<std::tuple<int,int,int,int>>> data)
-{
-    QVector<QVector<std::tuple<int,int,int,int>>> frameData;
-    frameData << data;
-
-}
-
-void Model:: newCell()
-{
-    pixelCount++;
-}
 void Model::newFrame()
 {
     Frame temp;
