@@ -212,7 +212,8 @@ void SpriteView::on_okButton_clicked()
 
 void SpriteView::on_actionNew_File_triggered()
 {
-   setSizeVisible(true);
+    popup.show();
+    setSizeVisible(true);
 }
 
 void SpriteView::setSizeVisible(bool mode) {

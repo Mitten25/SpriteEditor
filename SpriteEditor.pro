@@ -28,12 +28,15 @@ SOURCES += \
         main.cpp \
         spriteview.cpp \
     model.cpp \
-    frame.cpp
+    frame.cpp \
+    form.cpp
 
 HEADERS += \
         spriteview.h \
     model.h \
-    frame.h
+    frame.h \
+    form.h
 
 FORMS += \
-        spriteview.ui
+        spriteview.ui \
+    form.ui
