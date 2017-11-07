@@ -51,6 +51,7 @@ private:
     void initTableItems(int, int);
 	void setActiveColor(QColor color);
 	QColor getActiveColor();
+    QVector<QVector<std::tuple<int, int, int, int>>> frames;
 	
     QVector<QVector<std::tuple<int, int, int, int>>> getFrame();
 };

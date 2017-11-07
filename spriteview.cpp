@@ -44,7 +44,7 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
     //        this, SLOT(drawSequence(std::pair<int, std::vector<int> >)));
 
     connect(ui->actionSave_File, SIGNAL(triggered(bool)), this, SLOT(saveFile()));
-    connect(ui->actionLoad_File, SIGNAL(triggered(bool)), this, SLOT(loadFile()));
+    connect(ui->actionOpen_File, SIGNAL(triggered(bool)), this, SLOT(loadFile()));
 
 }
 
@@ -53,6 +53,10 @@ void SpriteView::saveFile()
     QString file_name = QFileDialog::getSaveFileName(this,
                                                 tr("Save Sprite Sheet"), "",
                                                 tr("Sprite Sheet (*.ssp);;All Files (*)"));
+
+    frames = getFrame();
+    QString save;
+
     if (file_name.isEmpty())
         return;
     else
@@ -64,13 +68,23 @@ void SpriteView::saveFile()
                                      file.errorString());
             return;
         }
+
+        // Write down in ASCII Text
+        for(auto i = frames.begin(); i != frames.end(); i++)
+        {
+            for (auto j = i->begin(); j != i->end(); j++)
+            {
+                save += (QString)j;
+            }
+        }
+
         QDataStream out(&file);
         out.setVersion(QDataStream::Qt_5_9);
-        //out << frames; // to save data to file
+        out << save; // to save data to file
     }
 }
 
-void SpriteView:: loadFile()
+void SpriteView::loadFile()
 {
     QString file_name = QFileDialog::getOpenFileName(this,
                                                 tr("Open Sprite Sheet"), "",
@@ -80,17 +94,21 @@ void SpriteView:: loadFile()
     else
     {
         QFile file(file_name);
+        // Check if you can open file
         if (!file.open(QIODevice::WriteOnly))
         {
             QMessageBox::information(this, tr("Unable to open file"),
                                      file.errorString());
             return;
         }
+
+        // Start reading information from file.
         QDataStream in(&file);
         in.setVersion(QDataStream::Qt_5_9);
+        frames.clear();
+        //in >> frames; // to load data to file
 
-        /*
-        in << frames; // to load data to file
+        // Check if there is anything in the file.
         if (frames.isEmpty())
         {
             QMessageBox::information(this, tr("No frames in file"),
@@ -100,7 +118,6 @@ void SpriteView:: loadFile()
         {
             // Set frames here to file
         }
-        */
     }
 }
 
@@ -121,13 +138,16 @@ QVector<QVector<std::tuple<int, int, int, int>>> SpriteView::getFrame()
     int row = tableWidget->rowCount();
     int column = tableWidget->columnCount();
     QVector<QVector<std::tuple<int, int, int, int>>> temp;
+    QVector<std::tuple<int, int, int, int>> colors;
 
-    for (int r = 0; r < row; r++) {
-        for (int c = 0; c < column; c++) {
+    for (int c = 0; c < column; c++) {
+        for (int r = 0; r < row; r++) {
             QColor color = tableWidget->itemAt(r, c)->backgroundColor();
             std::tuple<int,int,int,int> mytuple (color.red(), color.green(), color.blue(), color.alpha());
-            temp[r][c] = mytuple;
+            colors.push_back(mytuple);
         }
+        temp.push_back(colors);
+        colors.clear();
     }
     //if (frames[currFrame].pixels.size() == 0)
     //    frames[currFrame].pixels = temp;
@@ -174,7 +194,6 @@ void SpriteView::on_tableWidget_clicked(const QModelIndex &index)
 void SpriteView::on_tableWidget_cellEntered(int row, int column)
 {
 	tableWidget->item(row, column)->setBackground(activeColor);
-
 }
 
 void SpriteView::on_eraseButton_clicked()
@@ -187,8 +206,6 @@ void SpriteView::on_okButton_clicked()
    ui->frame->setVisible(false);
    initTableItems(ui->heightBox->value(), ui->widthBox->value());
 }
-
-
 
 void SpriteView::on_actionNew_File_triggered()
 {
