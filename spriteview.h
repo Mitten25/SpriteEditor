@@ -54,6 +54,7 @@ private:
     QVector<QVector<std::tuple<int, int, int, int>>> frames;
 	
     QVector<QVector<std::tuple<int, int, int, int>>> getFrame();
+    void setSizeVisible(bool);
 };
 
 #endif // SPRITEVIEW_H

@@ -13,7 +13,7 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
     ui->setupUi(this);
 	//ui->tableWidget->setModel( &model );
 	tableWidget = ui->tableWidget;
-    ui->frame->setVisible(false);
+    setSizeVisible(false);
 	//QPalette palette = tableWidget->palette();
 	//palette.setBrush(QPalette::Highlight,QBrush(Qt::white));
 	//palette.setBrush(QPalette::HighlightedText,QBrush(Qt::black));
@@ -202,7 +202,7 @@ void SpriteView::on_eraseButton_clicked()
 
 void SpriteView::on_okButton_clicked()
 {
-   ui->frame->setVisible(false);
+   setSizeVisible(false);
    initTableItems(ui->heightBox->value(), ui->widthBox->value());
    ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
    ui->tableWidget->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
@@ -210,5 +210,14 @@ void SpriteView::on_okButton_clicked()
 
 void SpriteView::on_actionNew_File_triggered()
 {
-   ui->frame->setVisible(true);
+   setSizeVisible(true);
+}
+
+void SpriteView::setSizeVisible(bool mode) {
+    ui->sizeLabel->setVisible(mode);
+    ui->widthLabel->setVisible(mode);
+    ui->heightLabel->setVisible(mode);
+    ui->widthBox->setVisible(mode);
+    ui->heightBox->setVisible(mode);
+    ui->okButton->setVisible(mode);
 }
