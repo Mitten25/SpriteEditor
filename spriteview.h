@@ -6,6 +6,12 @@
 #include <QPalette>
 #include <QColor>
 #include <QColorDialog>
+#include <QtDebug>
+#include <QFileDialog>
+#include <QFile>
+#include <QMessageBox>
+#include <QDebug>
+#include <tuple>
 #include "model.h"
 #include "frame.h"
 
@@ -52,6 +58,7 @@ private:
 	void setActiveColor(QColor color);
 	QColor getActiveColor();
     QVector<QVector<std::tuple<int, int, int, int>>> frames;
+    QString ASCII_text;
 	
     QVector<QVector<std::tuple<int, int, int, int>>> getFrame();
     void setSizeVisible(bool);

@@ -1,10 +1,5 @@
 #include "spriteview.h"
 #include "ui_spriteview.h"
-#include <QtDebug>
-#include <QFileDialog>
-#include <QFile>
-#include <QMessageBox>
-
 
 SpriteView::SpriteView(Model& model, QWidget *parent) :
     QMainWindow(parent),
@@ -54,7 +49,7 @@ void SpriteView::saveFile()
                                                 tr("Sprite Sheet (*.ssp);;All Files (*)"));
 
     frames = getFrame();
-    QString save;
+    ASCII_text.clear();
 
     if (file_name.isEmpty())
         return;
@@ -69,17 +64,24 @@ void SpriteView::saveFile()
         }
 
         // Write down in ASCII Text
+        // Writing down Height and Width
+        ASCII_text += QString(tableWidget->rowCount()) + " " + QString(tableWidget->columnCount()) + QString("\n");
+        // Writing down Pixels
         for(auto i = frames.begin(); i != frames.end(); i++)
         {
             for (auto j = i->begin(); j != i->end(); j++)
             {
-                //save += (QString)j;
+                std::tuple<int, int, int, int> temp = *j;
+                ASCII_text += QString(std::get<0>(temp)) + " " + QString(std::get<1>(temp)) + " " + QString(std::get<2>(temp)) + " " + QString(std::get<3>(temp)) + " ";
             }
+            ASCII_text += QString("\n");
         }
+
+        qDebug() << ASCII_text;
 
         QDataStream out(&file);
         out.setVersion(QDataStream::Qt_5_9);
-        out << save; // to save data to file
+        out << ASCII_text; // to save data to file
     }
 }
 
