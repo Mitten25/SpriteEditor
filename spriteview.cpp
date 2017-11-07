@@ -14,9 +14,11 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
 	//palette.setBrush(QPalette::HighlightedText,QBrush(Qt::black));
 	//tableWidget->setPalette(palette);
 
-	QColor startColor("black");
-	ui->colorButton->setStyleSheet(COLOR_STYLE.arg(startColor.name()));
-	activeColor = startColor;
+    QColor startColor("black");
+    ui->colorButton->setStyleSheet(COLOR_STYLE.arg(startColor.name()));
+    activeColor = startColor;
+    frameCount = 0;
+    currentFrameNum = 0;
     //initTableItems(0);
 
 	// TODO: we should probably set up more signals and slots so that
@@ -36,6 +38,10 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
 
     //connect(&simonGame, SIGNAL(sendSequence(std::pair<int, std::vector<int> >)),
     //        this, SLOT(drawSequence(std::pair<int, std::vector<int> >)));
+
+    //frames
+    connect(ui->addFrameButton, SIGNAL(clicked(bool)), this, SLOT(initNewFrame()));
+    connect(this, SIGNAL(frameCreated(QVector<QVector<std::tuple<int,int,int,int>>>)), &model, SLOT(outputFramesData(QVector<QVector<std::tuple<int,int,int,int>>>)));
 
     connect(ui->actionSave_File, SIGNAL(triggered(bool)), this, SLOT(saveFile()));
     connect(ui->actionOpen_File, SIGNAL(triggered(bool)), this, SLOT(loadFile()));
@@ -134,6 +140,52 @@ void SpriteView::initTableItems(int row, int column)
 	}
 }
 
+//creates and initializes a new frame in central widget
+void SpriteView::initNewFrame()
+{
+    QTableWidgetItem *newRow = new QTableWidgetItem();
+    ui->framesTable->setRowCount(frameCount+1);
+    ui->framesTable->setColumnCount(1);
+    ui->framesTable->setItem(frameCount+1,1, newRow);
+    ui->framesTable->verticalHeader()->resizeSection(frameCount, 125);
+    ui->framesTable->horizontalHeader()->resizeSection(frameCount, 200);
+    ui->framesTable->horizontalHeader()->setVisible(false);
+    QTableWidget *newFrame = new QTableWidget();
+    newFrame->setObjectName("tableWidget"+QString::number(frameCount));
+
+    initFrameItem(newFrame);
+
+    ui->framesTable->setCellWidget(frameCount,0,newFrame);
+    frameCount++;
+    //void sendData(){emit redirectData(edit->text());}
+    emit frameCreated(getFrame());
+}
+
+void SpriteView::initFrameItem(QTableWidget *newFrame)
+{
+    int rows = ui->heightBox->value();
+    int columns = ui->widthBox->value();
+    int itemSizeD = rows;
+    if(rows < columns){itemSizeD = columns;}
+    //initialize items in table
+    newFrame->verticalHeader()->setVisible(false);
+    newFrame->horizontalHeader()->setVisible(false);
+    newFrame->setRowCount(rows);
+    newFrame->setColumnCount(columns);
+    for (int r = 0; r < rows; r++) {
+        for (int c = 0; c < columns; c++) {
+            QTableWidgetItem *newItem = new QTableWidgetItem();
+            newFrame->setItem(r, c, newItem);
+            newFrame->verticalHeader()->resizeSection(r, 100/itemSizeD);
+            newFrame->horizontalHeader()->resizeSection(c, 100/itemSizeD);
+            //disable selecting and editing cells
+            newFrame->setEditTriggers(QAbstractItemView::NoEditTriggers);
+            newFrame->setFocusPolicy(Qt::NoFocus);
+            newFrame->setSelectionMode(QAbstractItemView::NoSelection);
+        }
+    }
+}
+
 QVector<QVector<std::tuple<int, int, int, int>>> SpriteView::getFrame()
 {
     int row = tableWidget->rowCount();
@@ -195,6 +247,8 @@ void SpriteView::on_tableWidget_clicked(const QModelIndex &index)
 void SpriteView::on_tableWidget_cellEntered(int row, int column)
 {
 	tableWidget->item(row, column)->setBackground(activeColor);
+    QTableWidget *cframe = this->findChild<QTableWidget *>("tableWidget"+QString::number(frameCount-1));
+    cframe->item(row,column)->setBackground(activeColor);
 }
 
 void SpriteView::on_eraseButton_clicked()
@@ -208,6 +262,7 @@ void SpriteView::on_okButton_clicked()
    initTableItems(ui->heightBox->value(), ui->widthBox->value());
    ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
    ui->tableWidget->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+   initNewFrame();
 }
 
 void SpriteView::on_actionNew_File_triggered()
