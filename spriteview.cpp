@@ -14,7 +14,6 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
 	//ui->tableWidget->setModel( &model );
 	tableWidget = ui->tableWidget;
     ui->frame->setVisible(false);
-
 	//QPalette palette = tableWidget->palette();
 	//palette.setBrush(QPalette::Highlight,QBrush(Qt::white));
 	//palette.setBrush(QPalette::HighlightedText,QBrush(Qt::black));
@@ -74,7 +73,7 @@ void SpriteView::saveFile()
         {
             for (auto j = i->begin(); j != i->end(); j++)
             {
-                save += (QString)j;
+                //save += (QString)j;
             }
         }
 
@@ -205,6 +204,8 @@ void SpriteView::on_okButton_clicked()
 {
    ui->frame->setVisible(false);
    initTableItems(ui->heightBox->value(), ui->widthBox->value());
+   ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+   ui->tableWidget->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 }
 
 void SpriteView::on_actionNew_File_triggered()
