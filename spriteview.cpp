@@ -46,9 +46,15 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
     //connect(&simonGame, SIGNAL(sendSequence(std::pair<int, std::vector<int> >)),
     //        this, SLOT(drawSequence(std::pair<int, std::vector<int> >)));
 
-    //
+    //connect(ui->tableWidget, &QTableWidget::cellEntered, &model, [&model]{&Model::updateTableColor(10,10);});
+    //connect(ui->tableWidget, &QTableWidget::cellEntered, &model, updateTableColor(10,10));
     //connect(ui->addFrameButton, &QPushButton::clicked, &model, &Model::newFrame);
-    //
+
+    //connect(button, SIGNAL(clicked()), this, SLOT(sendData()));
+    //connect(this, SIGNAL(redirectData(QString)), myClass, SLOT(outputData(QString)));
+
+    connect(ui->tableWidget, SIGNAL(cellEntered(int,int)), this, SLOT(initNewFrame()));
+    connect(this, SIGNAL(frameCreated(QVector<QVector<std::tuple<int,int,int,int>>>)), &model, SLOT(outputFramesData(QVector<QVector<std::tuple<int,int,int,int>>>)));
 
     connect(ui->actionSave_File, SIGNAL(triggered(bool)), this, SLOT(saveFile()));
     connect(ui->actionLoad_File, SIGNAL(triggered(bool)), this, SLOT(loadFile()));
@@ -140,6 +146,8 @@ void SpriteView::initNewFrame()
 
     ui->framesTable->setCellWidget(frameCount,0,newFrame);
     frameCount++;
+    //void sendData(){emit redirectData(edit->text());}
+    emit frameCreated(getFrame());
 }
 
 void SpriteView::initFrameItem(QTableWidget *newFrame)
@@ -166,18 +174,22 @@ void SpriteView::initFrameItem(QTableWidget *newFrame)
         }
     }
 }
+
 QVector<QVector<std::tuple<int, int, int, int>>> SpriteView::getFrame()
 {
     int row = tableWidget->rowCount();
     int column = tableWidget->columnCount();
     QVector<QVector<std::tuple<int, int, int, int>>> temp;
+    QVector<std::tuple<int, int, int, int>> colors;
 
-    for (int r = 0; r < row; r++) {
-        for (int c = 0; c < column; c++) {
+    for (int c = 0; c < column; c++) {
+        for (int r = 0; r < row; r++) {
             QColor color = tableWidget->itemAt(r, c)->backgroundColor();
             std::tuple<int,int,int,int> mytuple (color.red(), color.green(), color.blue(), color.alpha());
-            temp[r][c] = mytuple;
+            colors.push_back(mytuple);
         }
+        temp.push_back(colors);
+        colors.clear();
     }
     //if (frames[currFrame].pixels.size() == 0)
     //    frames[currFrame].pixels = temp;
@@ -249,5 +261,5 @@ void SpriteView::on_actionNew_File_triggered()
 
 void SpriteView::on_addFrameButton_clicked()
 {
-    initNewFrame();
+    //initNewFrame();
 }

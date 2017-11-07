@@ -24,6 +24,8 @@ public:
     explicit SpriteView(Model& model, QWidget *parent = 0);
     ~SpriteView();
 
+signals:
+    void frameCreated(QVector<QVector<std::tuple<int, int, int, int>>> frames);
 private slots:
     void on_colorButton_clicked();
 
@@ -45,6 +47,8 @@ private slots:
 
     void on_addFrameButton_clicked();
 
+    void initNewFrame();
+
 private:
     Ui::SpriteView *ui;
     QTableWidget* tableWidget;
@@ -53,7 +57,6 @@ private:
     int frameCount;
     int currentFrameNum;
     void initTableItems(int, int);
-    void initNewFrame();
     void initFrameItem(QTableWidget *newFrame);
     void setActiveColor(QColor color);
     QColor getActiveColor();
