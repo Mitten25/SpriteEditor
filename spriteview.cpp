@@ -53,7 +53,7 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
     //connect(button, SIGNAL(clicked()), this, SLOT(sendData()));
     //connect(this, SIGNAL(redirectData(QString)), myClass, SLOT(outputData(QString)));
 
-    connect(ui->tableWidget, SIGNAL(cellEntered(int,int)), this, SLOT(initNewFrame()));
+    connect(ui->addFrameButton, SIGNAL(clicked(bool)), this, SLOT(initNewFrame()));
     connect(this, SIGNAL(frameCreated(QVector<QVector<std::tuple<int,int,int,int>>>)), &model, SLOT(outputFramesData(QVector<QVector<std::tuple<int,int,int,int>>>)));
 
     connect(ui->actionSave_File, SIGNAL(triggered(bool)), this, SLOT(saveFile()));
