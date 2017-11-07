@@ -374,7 +374,6 @@
     <addaction name="actionNew_File"/>
     <addaction name="actionOpen_File"/>
     <addaction name="actionSave_File"/>
-    <addaction name="actionLoad_File"/>
    </widget>
    <addaction name="menuSprite_Editor"/>
   </widget>
