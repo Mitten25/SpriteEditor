@@ -14,6 +14,7 @@
 #include <tuple>
 #include "model.h"
 #include "frame.h"
+#include "form.h"
 
 const QString COLOR_STYLE("QPushButton { background-color : %1; }");
 
@@ -59,6 +60,8 @@ private:
 	QColor getActiveColor();
     QVector<QVector<std::tuple<int, int, int, int>>> frames;
     QString ASCII_text;
+
+    Form popup;
 	
     QVector<QVector<std::tuple<int, int, int, int>>> getFrame();
     void setSizeVisible(bool);
