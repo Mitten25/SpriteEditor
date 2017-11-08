@@ -7,6 +7,7 @@
 #include <QColor>
 #include <QColorDialog>
 #include <QtDebug>
+#include <QDialog>
 #include <QFileDialog>
 #include <QFile>
 #include <QMessageBox>

@@ -2,10 +2,13 @@
 #include "ui_form.h"
 
 Form::Form(QWidget *parent) :
-    QWidget(parent),
+    QDialog(parent),
     ui(new Ui::Form)
 {
     ui->setupUi(this);
+
+    connect(ui->buttonBox, &QDialogButtonBox::accepted, this, &Form::accept);
+    connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 }
 
 Form::~Form()
@@ -13,7 +16,12 @@ Form::~Form()
     delete ui;
 }
 
-void Form::on_okButton_clicked()
+int Form::getWidth()
 {
-    hide();
+    return ui->widthBox->value();
+}
+
+int Form::getHeight()
+{
+    return ui->heightBox->value();
 }
