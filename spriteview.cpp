@@ -295,6 +295,8 @@ void SpriteView::on_actionNew_File_triggered()
     Form popup;
     if(popup.exec() == QDialog::Accepted)
     {
+        rows_ = popup.getHeight();
+        columns_ = popup.getWidth();
         initMainDrawBoxItems(popup.getHeight(), popup.getWidth());
         ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
         ui->tableWidget->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
