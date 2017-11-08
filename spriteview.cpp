@@ -6,20 +6,17 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
     ui(new Ui::SpriteView)
 {
     ui->setupUi(this);
-	//ui->tableWidget->setModel( &model );
-	tableWidget = ui->tableWidget;
-    setSizeVisible(false);
-	//QPalette palette = tableWidget->palette();
-	//palette.setBrush(QPalette::Highlight,QBrush(Qt::white));
-	//palette.setBrush(QPalette::HighlightedText,QBrush(Qt::black));
-	//tableWidget->setPalette(palette);
-
+	//tableWidget = ui->tableWidget;
+    setSizeVisible(true);
+	// Color for blank background
+	QColor blankColor("white");
+	// Initialize color picker button
     QColor startColor("black");
     ui->colorButton->setStyleSheet(COLOR_STYLE.arg(startColor.name()));
     activeColor = startColor;
+
     frameCount = 0;
     currentFrameNum = 0;
-    //initTableItems(0);
 
 	// TODO: we should probably set up more signals and slots so that
 	// the model can control more
@@ -41,7 +38,7 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
 
     //frames
     connect(ui->addFrameButton, SIGNAL(clicked(bool)), this, SLOT(initNewFrame()));
-    connect(this, SIGNAL(frameCreated(QVector<QVector<std::tuple<int,int,int,int>>>)), &model, SLOT(outputFramesData(QVector<QVector<std::tuple<int,int,int,int>>>)));
+    connect(this, SIGNAL(frameCreated(Frame)), &model, SLOT(outputFramesData(Frame)));
 
     connect(ui->actionSave_File, SIGNAL(triggered(bool)), this, SLOT(saveFile()));
     connect(ui->actionOpen_File, SIGNAL(triggered(bool)), this, SLOT(loadFile()));
@@ -54,7 +51,8 @@ void SpriteView::saveFile()
                                                 tr("Save Sprite Sheet"), "",
                                                 tr("Sprite Sheet (*.ssp);;All Files (*)"));
 
-    frames = getFrame();
+	Frame frame;
+	frame = Frame::fromTableWidget(ui->tableWidget);
     ASCII_text.clear();
 
     if (file_name.isEmpty())
@@ -71,9 +69,9 @@ void SpriteView::saveFile()
 
         // Write down in ASCII Text
         // Writing down Height and Width
-        ASCII_text += QString(tableWidget->rowCount()) + " " + QString(tableWidget->columnCount()) + QString("\n");
+        ASCII_text += QString(ui->tableWidget->rowCount()) + " " + QString(ui->tableWidget->columnCount()) + QString("\n");
         // Writing down Pixels
-        for(auto i = frames.begin(); i != frames.end(); i++)
+        for(auto i = frame.pixels.begin(); i != frame.pixels.end(); i++)
         {
             for (auto j = i->begin(); j != i->end(); j++)
             {
@@ -86,7 +84,7 @@ void SpriteView::saveFile()
         qDebug() << ASCII_text;
 
         QDataStream out(&file);
-        out.setVersion(QDataStream::Qt_5_9);
+        //out.setVersion(QDataStream::Qt_5_9);
         out << ASCII_text; // to save data to file
     }
 }
@@ -111,7 +109,7 @@ void SpriteView::loadFile()
 
         // Start reading information from file.
         QDataStream in(&file);
-        in.setVersion(QDataStream::Qt_5_9);
+        //in.setVersion(QDataStream::Qt_5_9);
         frames.clear();
         //in >> frames; // to load data to file
 
@@ -130,35 +128,38 @@ void SpriteView::loadFile()
 
 void SpriteView::initTableItems(int row, int column)
 {
-    tableWidget->setRowCount(row);
-    tableWidget->setColumnCount(column);
+    ui->tableWidget->setRowCount(row);
+    ui->tableWidget->setColumnCount(column);
     for (int r = 0; r < row; r++) {
         for (int c = 0; c < column; c++) {
-            tableWidget->setItem(r, c, new QTableWidgetItem);
-			//TODO: set to alpha = 0
+            ui->tableWidget->setItem(r, c, new QTableWidgetItem);
 		}
 	}
 }
 
-//creates and initializes a new frame in central widget
 void SpriteView::initNewFrame()
 {
     QTableWidgetItem *newRow = new QTableWidgetItem();
     ui->framesTable->setRowCount(frameCount+1);
     ui->framesTable->setColumnCount(1);
-    ui->framesTable->setItem(frameCount+1,1, newRow);
+    ui->framesTable->setItem(frameCount+1, 1, newRow);
     ui->framesTable->verticalHeader()->resizeSection(frameCount, 125);
     ui->framesTable->horizontalHeader()->resizeSection(frameCount, 200);
     ui->framesTable->horizontalHeader()->setVisible(false);
+
     QTableWidget *newFrame = new QTableWidget();
     newFrame->setObjectName("tableWidget"+QString::number(frameCount));
 
     initFrameItem(newFrame);
+	// clear the current drawing frame
+	initTableItems(ui->heightBox->value(), ui->widthBox->value());
 
-    ui->framesTable->setCellWidget(frameCount,0,newFrame);
+    ui->framesTable->setCellWidget(frameCount, 0, newFrame);
     frameCount++;
     //void sendData(){emit redirectData(edit->text());}
-    emit frameCreated(getFrame());
+    emit frameCreated(Frame::fromTableWidget(ui->tableWidget));
+
+	currentTableWidget = newFrame;
 }
 
 void SpriteView::initFrameItem(QTableWidget *newFrame)
@@ -172,12 +173,17 @@ void SpriteView::initFrameItem(QTableWidget *newFrame)
     newFrame->horizontalHeader()->setVisible(false);
     newFrame->setRowCount(rows);
     newFrame->setColumnCount(columns);
+
+    connect(newFrame, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(onFrameSelected(QTableWidgetItem*)));
+
     for (int r = 0; r < rows; r++) {
         for (int c = 0; c < columns; c++) {
             QTableWidgetItem *newItem = new QTableWidgetItem();
             newFrame->setItem(r, c, newItem);
+			newItem->setBackground(QColor("white"));
             newFrame->verticalHeader()->resizeSection(r, 100/itemSizeD);
             newFrame->horizontalHeader()->resizeSection(c, 100/itemSizeD);
+
             //disable selecting and editing cells
             newFrame->setEditTriggers(QAbstractItemView::NoEditTriggers);
             newFrame->setFocusPolicy(Qt::NoFocus);
@@ -186,26 +192,27 @@ void SpriteView::initFrameItem(QTableWidget *newFrame)
     }
 }
 
-QVector<QVector<std::tuple<int, int, int, int>>> SpriteView::getFrame()
-{
-    int row = tableWidget->rowCount();
-    int column = tableWidget->columnCount();
-    QVector<QVector<std::tuple<int, int, int, int>>> temp;
-    QVector<std::tuple<int, int, int, int>> colors;
 
-    for (int c = 0; c < column; c++) {
-        for (int r = 0; r < row; r++) {
-            QColor color = tableWidget->itemAt(r, c)->backgroundColor();
-            std::tuple<int,int,int,int> mytuple (color.red(), color.green(), color.blue(), color.alpha());
-            colors.push_back(mytuple);
-        }
-        temp.push_back(colors);
-        colors.clear();
-    }
-    //if (frames[currFrame].pixels.size() == 0)
-    //    frames[currFrame].pixels = temp;
-    return temp;
+
+void SpriteView::copyQTableWidgetContents(QTableWidget* from, QTableWidget* to) {
+	// throw an error if they are not the same size
+	if (from->rowCount() != to->rowCount() || from->columnCount() != to->columnCount()) {
+		throw;
+	}
+
+	int row = from->rowCount();
+	int column = from->columnCount();
+    for (int r = 0; r < row; r++) {
+        for (int c = 0; c < column; c++) {
+			QColor fromColor = from->item(r, c)->background().color();
+			to->item(r, c)->setBackground(fromColor);
+		}
+	}
 }
+
+
+
+
 
 SpriteView::~SpriteView()
 {
@@ -221,34 +228,29 @@ void SpriteView::setActiveColor(QColor color)
 }
 
 
+/*
+ * User clicked to change color of pen
+ */
 void SpriteView::on_colorButton_clicked()
 {
 	QColor chosenColor = QColorDialog::getColor();
-	// if user didn't cancel the dialog, set the color to the chosen
+	// if user didn't cancel the dialog, set the color to the one chosen 
 	if (chosenColor.isValid()) {
 		setActiveColor(chosenColor);
 	}
-	//qDebug() << chosenColor.name();
 }
 
-
-void SpriteView::on_tableWidget_pressed(const QModelIndex &index)
-{
-    //qDebug() << "press " << index;
-
-}
-
-void SpriteView::on_tableWidget_clicked(const QModelIndex &index)
-{
-    //qDebug() << "click " << index;
-
-}
-
+/*
+ * User is clicking and dragging in the drawing box
+ */
 void SpriteView::on_tableWidget_cellEntered(int row, int column)
 {
-	tableWidget->item(row, column)->setBackground(activeColor);
-    QTableWidget *cframe = this->findChild<QTableWidget *>("tableWidget"+QString::number(frameCount-1));
-    cframe->item(row,column)->setBackground(activeColor);
+	// change the color of the currently displayed drawing
+	ui->tableWidget->item(row, column)->setBackground(activeColor);
+
+	// also change the cell of the frame on the side
+    //QTableWidget *cframe = this->findChild<QTableWidget *>("tableWidget"+QString::number(frameCount-1));
+    currentTableWidget->item(row,column)->setBackground(activeColor);
 }
 
 void SpriteView::on_eraseButton_clicked()
@@ -260,8 +262,8 @@ void SpriteView::on_okButton_clicked()
 {
    setSizeVisible(false);
    initTableItems(ui->heightBox->value(), ui->widthBox->value());
-   ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-   ui->tableWidget->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+   //ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+   //ui->tableWidget->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
    initNewFrame();
 }
 
@@ -279,3 +281,12 @@ void SpriteView::setSizeVisible(bool mode) {
     ui->heightBox->setVisible(mode);
     ui->okButton->setVisible(mode);
 }
+
+void SpriteView::onFrameSelected(QTableWidgetItem *item)
+{
+    qDebug() << "cell";
+	QTableWidget* parent = item->tableWidget(); 
+	copyQTableWidgetContents(parent, ui->tableWidget); 
+	currentTableWidget = parent;
+}
+

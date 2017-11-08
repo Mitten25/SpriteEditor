@@ -1,6 +1,8 @@
 #ifndef FRAME_H
 #define FRAME_H
 #include <QVector>
+#include <QColor>
+#include <QTableWidget>
 #include <tuple>
 
 class Frame
@@ -15,6 +17,7 @@ public:
     Frame();
     std::tuple<int, int, int, int> getPixel();
     void setPixel(std::tuple <int, int, int, int>);
+	static Frame fromTableWidget(QTableWidget* tableWidget);
 };
 
 #endif // FRAME_H

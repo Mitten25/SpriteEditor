@@ -23,7 +23,7 @@ signals:
 public slots:
 //    void getTable(QTableWidget);
     void newFrame();
-    void outputFramesData(QVector<QVector<std::tuple<int,int,int,int>>> data);
+    void outputFramesData(Frame data);
 private:
     QVector<Frame> frames;
     int currFrame;

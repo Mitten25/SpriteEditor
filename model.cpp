@@ -4,10 +4,11 @@ Model::Model(QObject *parent) : QObject (parent)
 {
 
 }
-void Model::outputFramesData(QVector<QVector<std::tuple<int,int,int,int>>> data)
+void Model::outputFramesData(Frame data)
 {
-    QVector<QVector<std::tuple<int,int,int,int>>> frameData;
-    frameData << data;
+	// TODO: what is this method even supposed to do?
+    //QVector<QVector<std::tuple<int,int,int,int>>> frameData;
+    //frameData << data;
 
 }
 void Model::newFrame()
