@@ -69,7 +69,7 @@ private:
 	QVector<Frame> frames;
     QString ASCII_text;
 
-    Form popup;
+    Form *popup;
 	
     void setSizeVisible(bool);
 };

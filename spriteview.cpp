@@ -5,6 +5,7 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::SpriteView)
 {
+    popup = new Form();
     ui->setupUi(this);
 	//tableWidget = ui->tableWidget;
     setSizeVisible(true);
@@ -282,8 +283,8 @@ void SpriteView::on_okButton_clicked()
    initMainDrawBoxItems(ui->heightBox->value(), ui->widthBox->value());
    // NOTE: sorry. not sure what these were for and they failed to compile
    // with Qt4
-   //ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-   //ui->tableWidget->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+   ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+   ui->tableWidget->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
    initNewFrame();
 }
 
@@ -292,7 +293,7 @@ void SpriteView::on_okButton_clicked()
  */
 void SpriteView::on_actionNew_File_triggered()
 {
-    popup.show();
+    popup->show();
     setSizeVisible(true);
 }
 
