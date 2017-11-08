@@ -21,22 +21,6 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
 	// TODO: we should probably set up more signals and slots so that
 	// the model can control more
 
-    //connect(this, SIGNAL(startGame ()),
-    //        &simonGame, SLOT(setSequence()));
-
-    //connect(this, SIGNAL(buttonClick(int)),
-    //        &simonGame, SLOT( buttonClick(int)));
-
-    //connect(&simonGame,SIGNAL(resetBoard()),
-    //        this, SLOT(drawGameOver()));
-
-    //connect(&simonGame, SIGNAL(updateProgress(float)),
-    //        this, SLOT(drawProgress(float)));
-
-    //connect(&simonGame, SIGNAL(sendSequence(std::pair<int, std::vector<int> >)),
-    //        this, SLOT(drawSequence(std::pair<int, std::vector<int> >)));
-
-    //frames
     connect(ui->addFrameButton, SIGNAL(clicked(bool)), this, SLOT(initNewFrame()));
     connect(this, SIGNAL(frameCreated(Frame)), &model, SLOT(outputFramesData(Frame)));
 
@@ -84,6 +68,7 @@ void SpriteView::saveFile()
         qDebug() << ASCII_text;
 
         QDataStream out(&file);
+		// NOTE: sorry, i was running qt4 and this wouldn't compile - Matt
         //out.setVersion(QDataStream::Qt_5_9);
         out << ASCII_text; // to save data to file
     }
@@ -109,6 +94,7 @@ void SpriteView::loadFile()
 
         // Start reading information from file.
         QDataStream in(&file);
+		// NOTE: sorry, i was running qt4 and this wouldn't compile - Matt
         //in.setVersion(QDataStream::Qt_5_9);
         frames.clear();
         //in >> frames; // to load data to file
@@ -126,7 +112,10 @@ void SpriteView::loadFile()
     }
 }
 
-void SpriteView::initTableItems(int row, int column)
+
+// Initialize the items in the main draw box so that we can
+// change the color of them
+void SpriteView::initMainDrawBoxItems(int row, int column)
 {
     ui->tableWidget->setRowCount(row);
     ui->tableWidget->setColumnCount(column);
@@ -137,6 +126,9 @@ void SpriteView::initTableItems(int row, int column)
 	}
 }
 
+/*
+ * Creates a new frame and adds it to the frame viewer on the side
+ */
 void SpriteView::initNewFrame()
 {
     QTableWidgetItem *newRow = new QTableWidgetItem();
@@ -152,16 +144,20 @@ void SpriteView::initNewFrame()
 
     initFrameItem(newFrame);
 	// clear the current drawing frame
-	initTableItems(ui->heightBox->value(), ui->widthBox->value());
+	initMainDrawBoxItems(ui->heightBox->value(), ui->widthBox->value());
 
     ui->framesTable->setCellWidget(frameCount, 0, newFrame);
     frameCount++;
     //void sendData(){emit redirectData(edit->text());}
     emit frameCreated(Frame::fromTableWidget(ui->tableWidget));
 
+	// Set this to be the current frame(/TableWidget)
 	currentTableWidget = newFrame;
 }
 
+/*
+ * Initialize a new frame in the side bar
+ */ 
 void SpriteView::initFrameItem(QTableWidget *newFrame)
 {
     int rows = ui->heightBox->value();
@@ -174,6 +170,8 @@ void SpriteView::initFrameItem(QTableWidget *newFrame)
     newFrame->setRowCount(rows);
     newFrame->setColumnCount(columns);
 
+	// Connect this itemClicked signal to trigger the onFrameSelected
+	// (used for later clicking to set this to the current frame) 
     connect(newFrame, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(onFrameSelected(QTableWidgetItem*)));
 
     for (int r = 0; r < rows; r++) {
@@ -194,16 +192,20 @@ void SpriteView::initFrameItem(QTableWidget *newFrame)
 
 
 
+/*
+ * Copy all of the colors in one QTableWidget to another
+ * (this is used for copying from side panel frame to main draw window)
+ */ 
 void SpriteView::copyQTableWidgetContents(QTableWidget* from, QTableWidget* to) {
 	// throw an error if they are not the same size
 	if (from->rowCount() != to->rowCount() || from->columnCount() != to->columnCount()) {
 		throw;
 	}
 
-	int row = from->rowCount();
-	int column = from->columnCount();
-    for (int r = 0; r < row; r++) {
-        for (int c = 0; c < column; c++) {
+	int rowCount = from->rowCount();
+	int columnCount = from->columnCount();
+    for (int r = 0; r < rowCount; r++) {
+        for (int c = 0; c < columnCount; c++) {
 			QColor fromColor = from->item(r, c)->background().color();
 			to->item(r, c)->setBackground(fromColor);
 		}
@@ -211,14 +213,9 @@ void SpriteView::copyQTableWidgetContents(QTableWidget* from, QTableWidget* to) 
 }
 
 
-
-
-
-SpriteView::~SpriteView()
-{
-    delete ui;
-}
-
+/*
+ * Change the active pen color and the color displayed in the box
+ */
 void SpriteView::setActiveColor(QColor color) 
 {
 	activeColor = color;
@@ -242,14 +239,15 @@ void SpriteView::on_colorButton_clicked()
 
 /*
  * User is clicking and dragging in the drawing box
+ *
+ * so color both the QWidgetTable for the main drawing box and the current frame
  */
 void SpriteView::on_tableWidget_cellEntered(int row, int column)
 {
 	// change the color of the currently displayed drawing
 	ui->tableWidget->item(row, column)->setBackground(activeColor);
 
-	// also change the cell of the frame on the side
-    //QTableWidget *cframe = this->findChild<QTableWidget *>("tableWidget"+QString::number(frameCount-1));
+	// also change the color of the current selected frame
     currentTableWidget->item(row,column)->setBackground(activeColor);
 }
 
@@ -261,18 +259,26 @@ void SpriteView::on_eraseButton_clicked()
 void SpriteView::on_okButton_clicked()
 {
    setSizeVisible(false);
-   initTableItems(ui->heightBox->value(), ui->widthBox->value());
+   initMainDrawBoxItems(ui->heightBox->value(), ui->widthBox->value());
+   // NOTE: sorry. not sure what these were for and they failed to compile
+   // with Qt4
    //ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
    //ui->tableWidget->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
    initNewFrame();
 }
 
+/*
+ * New File button is clicked on 
+ */
 void SpriteView::on_actionNew_File_triggered()
 {
     popup.show();
     setSizeVisible(true);
 }
 
+/* 
+ * Hide the size box selector
+ */
 void SpriteView::setSizeVisible(bool mode) {
     ui->sizeLabel->setVisible(mode);
     ui->widthLabel->setVisible(mode);
@@ -282,11 +288,23 @@ void SpriteView::setSizeVisible(bool mode) {
     ui->okButton->setVisible(mode);
 }
 
+/*
+ * Called when any of the cells in the frame preview is clicked
+ *
+ * (note: to change the current frame, the user has to click in the cell area
+ * of the frame preview)
+ */
 void SpriteView::onFrameSelected(QTableWidgetItem *item)
 {
-    qDebug() << "cell";
+	// Grab the parent QTableWidget* of the cell that was clicked on 
 	QTableWidget* parent = item->tableWidget(); 
+	// Copy the contents of this frame to the main draw box 
 	copyQTableWidgetContents(parent, ui->tableWidget); 
 	currentTableWidget = parent;
 }
 
+
+SpriteView::~SpriteView()
+{
+    delete ui;
+}

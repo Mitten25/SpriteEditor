@@ -48,7 +48,6 @@ private slots:
 
     void loadFile();
 
-	// creates a new frame and adds it to the frame viewer on the side
     void initNewFrame();
 
     void onFrameSelected(QTableWidgetItem *item);
@@ -62,7 +61,7 @@ private:
 	QColor blankColor;
     int frameCount;
     int currentFrameNum;
-    void initTableItems(int, int);
+    void initMainDrawBoxItems(int, int);
     void initFrameItem(QTableWidget *newFrame);
 	void setActiveColor(QColor color);
 	void copyQTableWidgetContents(QTableWidget* from, QTableWidget* to); 
