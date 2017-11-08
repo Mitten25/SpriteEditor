@@ -278,15 +278,6 @@ void SpriteView::on_eraseButton_clicked()
     setActiveColor(QColor(255, 255, 255, 255));
 }
 
-void SpriteView::on_okButton_clicked()
-{
-   // NOTE: sorry. not sure what these were for and they failed to compile
-   // with Qt4
-   ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-   ui->tableWidget->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-   initNewFrame();
-}
-
 /*
  * New File button is clicked on 
  */
