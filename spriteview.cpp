@@ -85,7 +85,7 @@ void SpriteView::loadFile()
     {
         QFile file(file_name);
         // Check if you can open file
-        if (!file.open(QIODevice::WriteOnly))
+        if (!file.open(QIODevice::ReadOnly))
         {
             QMessageBox::information(this, tr("Unable to open file"),
                                      file.errorString());
@@ -93,21 +93,41 @@ void SpriteView::loadFile()
         }
 
         // Start reading information from file.
-        QDataStream in(&file);
-		// NOTE: sorry, i was running qt4 and this wouldn't compile - Matt
-        //in.setVersion(QDataStream::Qt_5_9);
+        QTextStream in(&file);
+        // NOTE: sorry, i was running qt4 and this wouldn't compile - Matt
         frames.clear();
         //in >> frames; // to load data to file
 
-        // Check if there is anything in the file.
-        if (frames.isEmpty())
+        QStringList height_and_width = in.readLine().split(" ");
+        int height = height_and_width[0].toInt();
+        int width = height_and_width[1].toInt();
+
+        //initTableItems(height, width);
+
+        QString frame = in.readLine();
+
+        int num_of_frames = frame.toInt();
+        int current_frame = 0;
+        // Looping to draw each frame
+        while (current_frame < num_of_frames)
         {
-            QMessageBox::information(this, tr("No frames in file"),
-                                     tr("The file you are attempting to open contains no frames"));
-        }
-        else
-        {
-            // Set frames here to file
+            int y = 0;
+            // Looping to draw all of the pixels
+            while (y < height)
+            {
+                int x = 0;
+                QString current_line = in.readLine();
+                QStringList colors = current_line.split(" ");
+
+                // To set each pixel with the correct color
+                for (int i = 0; i <= colors.size() - 4; i += 4)
+                {
+                    //tableWidget->item(y, x)->setBackgroundColor(QColor(colors[i].toInt(),colors[i+1].toInt(),colors[i+2].toInt(),colors[i+3].toInt()));
+                    x++;
+                }
+                y++;
+            }
+            current_frame++;
         }
     }
 }
