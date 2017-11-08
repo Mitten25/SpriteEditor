@@ -8,7 +8,6 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
     //popup = new Form();
     ui->setupUi(this);
 	//tableWidget = ui->tableWidget;
-    setSizeVisible(true);
 	// Color for blank background
 	QColor blankColor("white");
 	// Initialize color picker button
@@ -16,6 +15,8 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
     ui->colorButton->setStyleSheet(COLOR_STYLE.arg(startColor.name()));
     activeColor = startColor;
 
+    rows_ = 8;
+    columns_ = 8;
     frameCount = 0;
     currentFrameNum = 0;
 
@@ -165,7 +166,7 @@ void SpriteView::initNewFrame()
 
     initFrameItem(newFrame);
 	// clear the current drawing frame
-	initMainDrawBoxItems(ui->heightBox->value(), ui->widthBox->value());
+    initMainDrawBoxItems(rows_, columns_);
 
     ui->framesTable->setCellWidget(frameCount, 0, newFrame);
     frameCount++;
@@ -181,8 +182,8 @@ void SpriteView::initNewFrame()
  */ 
 void SpriteView::initFrameItem(QTableWidget *newFrame)
 {
-    int rows = ui->heightBox->value();
-    int columns = ui->widthBox->value();
+    int rows = rows_;
+    int columns = columns_;
     int itemSizeD = rows;
     if(rows < columns){itemSizeD = columns;}
     //initialize items in table
@@ -279,8 +280,6 @@ void SpriteView::on_eraseButton_clicked()
 
 void SpriteView::on_okButton_clicked()
 {
-   setSizeVisible(false);
-   initMainDrawBoxItems(ui->heightBox->value(), ui->widthBox->value());
    // NOTE: sorry. not sure what these were for and they failed to compile
    // with Qt4
    ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
@@ -296,7 +295,6 @@ void SpriteView::on_actionNew_File_triggered()
     Form popup;
     if(popup.exec() == QDialog::Accepted)
     {
-        setSizeVisible(false);
         initMainDrawBoxItems(popup.getHeight(), popup.getWidth());
         ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
         ui->tableWidget->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
@@ -304,17 +302,6 @@ void SpriteView::on_actionNew_File_triggered()
     }
 }
 
-/* 
- * Hide the size box selector
- */
-void SpriteView::setSizeVisible(bool mode) {
-    ui->sizeLabel->setVisible(mode);
-    ui->widthLabel->setVisible(mode);
-    ui->heightLabel->setVisible(mode);
-    ui->widthBox->setVisible(mode);
-    ui->heightBox->setVisible(mode);
-    ui->okButton->setVisible(mode);
-}
 
 /*
  * Called when any of the cells in the frame preview is clicked

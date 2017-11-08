@@ -71,8 +71,8 @@ private:
     QString ASCII_text;
 
     Form *popup;
-	
-    void setSizeVisible(bool);
+    int rows_;
+    int columns_;
 };
 
 #endif // SPRITEVIEW_H
