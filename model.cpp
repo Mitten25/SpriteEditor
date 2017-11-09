@@ -11,17 +11,17 @@ void Model::outputFramesData(Frame data)
     //frameData << data;
 
 }
-void Model::newFrame()
+void Model::newFrame(int height, int width)
 {
-    Frame temp;
-    frames.push_back(temp);
+    Frame temp(height, width);
+    frames.append(temp);
     currFrame = frames.size() - 1;
 }
 
 void Model::saveFrame()
 {
     // TODO:
-
+    emit getFrame(frames);
     //need else for layer number
 }
 
@@ -40,6 +40,16 @@ Frame Model::loadFrame()
 void Model::exportGif() 
 {
     // TODO: 
+}
+
+void Model::setFramePixel(int x, int y)
+{
+    frames[currFrame].setPixel(x, y);
+}
+
+void Model::setColor(std::tuple<int, int, int, int> c)
+{
+    frames[currFrame].setColor(c);
 }
 
 QVariant Model::data(const QModelIndex &index, int role) const

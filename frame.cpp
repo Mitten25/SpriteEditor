@@ -2,30 +2,53 @@
 
 using namespace std;
 
+Frame::Frame(int height, int width)
+{
+    row = height;
+    column = width;
+
+    //Will set everything to white
+    for (int x = 0; x < column; x++)
+    {
+        pixels.append(QVector<std::tuple<int,int,int,int>>(row));
+        for (int y = 0; y < row; y++)
+        {
+            std::tuple<int,int,int,int> white (255,255,255,255);
+            pixels[x][y] = white;
+        }
+    }
+}
+
 Frame::Frame()
 {
 
 }
 
-tuple<int, int, int, int> Frame::getPixel() {
+tuple<int, int, int, int> Frame::getPixel(int x, int y) {
     //To be implemented, may not be using result variable, placed there just as filled to compile.
-    tuple<int, int, int, int> result;
-    return result;
+    return pixels[x][y];
 }
 
-void Frame::setPixel(tuple <int, int, int, int>) {
+void Frame::setPixel(int x, int y)
+{
     //To be implemented
+    pixels[x][y] = color;
+}
+
+void Frame::setColor(std::tuple <int, int, int, int> c)
+{
+    color = c;
 }
 
 Frame Frame::fromTableWidget(QTableWidget* tableWidget)
 {
-    int row = tableWidget->rowCount();
-    int column = tableWidget->columnCount();
-	Frame frame;
+    int rows = tableWidget->rowCount();
+    int columns = tableWidget->columnCount();
+    Frame frame;
     QVector<std::tuple<int, int, int, int>> colors;
 
-    for (int c = 0; c < column; c++) {
-        for (int r = 0; r < row; r++) {
+    for (int c = 0; c < columns; c++) {
+        for (int r = 0; r < rows; r++) {
             QColor color = tableWidget->itemAt(r, c)->backgroundColor();
             std::tuple<int,int,int,int> mytuple (color.red(), color.green(), color.blue(), color.alpha());
             colors.push_back(mytuple);
@@ -36,4 +59,23 @@ Frame Frame::fromTableWidget(QTableWidget* tableWidget)
     //if (frames[currFrame].pixels.size() == 0)
     //    frames[currFrame].pixels = temp;
     return frame;
+}
+
+QString Frame::toString()
+{
+    QString result;
+    for (int x = 0; x < column; x++)
+    {
+        for (int y = 0; y < row; y++)
+        {
+            std::tuple <int, int, int, int> temp = getPixel(x, y);
+            result += QString::number(std::get<0>(temp)) + " "
+                    + QString::number(std::get<1>(temp)) + " "
+                    + QString::number(std::get<2>(temp)) + " "
+                    + QString::number(std::get<3>(temp)) + " ";
+
+        }
+        result += QString("\n");
+    }
+    return result;
 }

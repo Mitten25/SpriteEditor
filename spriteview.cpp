@@ -5,8 +5,8 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::SpriteView)
 {
-    //popup = new Form();
     ui->setupUi(this);
+
 	//tableWidget = ui->tableWidget;
 	// Color for blank background
 	QColor blankColor("white");
@@ -25,21 +25,29 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
 
     connect(ui->addFrameButton, SIGNAL(clicked(bool)), this, SLOT(initNewFrame()));
     connect(this, SIGNAL(frameCreated(Frame)), &model, SLOT(outputFramesData(Frame)));
+    connect(ui->tableWidget, SIGNAL(cellEntered(int,int)), this, SLOT(colorCell(int,int)));
 
-    connect(ui->actionSave_File, SIGNAL(triggered(bool)), this, SLOT(saveFile()));
-    connect(ui->actionOpen_File, SIGNAL(triggered(bool)), this, SLOT(loadFile()));
+    // File Menu
+    connect(ui->actionSave_File, SIGNAL(triggered(bool)), &model, SLOT(saveFrame()));
+    connect(&model, SIGNAL(getFrame(QVector<Frame>)), this, SLOT(saveFile(QVector<Frame>)));
+    connect(ui->actionOpen_File, SIGNAL(triggered(bool)), this, SLOT(openFile()));
+    connect(ui->actionNew_File, SIGNAL(triggered(bool)), this, SLOT(newFile()));
 
+    // Create Frame in Model
+    connect(this, SIGNAL(createFrame(int,int)), &model, SLOT(newFrame(int,int)));
+    connect(this, SIGNAL(pixelColor(std::tuple<int,int,int,int>)), &model, SLOT(setColor(std::tuple<int,int,int,int>)));
+    connect(ui->tableWidget, SIGNAL(cellEntered(int,int)), &model, SLOT(setFramePixel(int,int)));
 }
 
-void SpriteView::saveFile()
+void SpriteView::saveFile(QVector<Frame> f)
 {
     QString file_name = QFileDialog::getSaveFileName(this,
                                                 tr("Save Sprite Sheet"), "",
                                                 tr("Sprite Sheet (*.ssp);;All Files (*)"));
 
-	Frame frame;
-	frame = Frame::fromTableWidget(ui->tableWidget);
-    ASCII_text.clear();
+    Frame frame;
+    frame = Frame::fromTableWidget(ui->tableWidget);
+    QString ASCII_text;
 
     if (file_name.isEmpty())
         return;
@@ -55,28 +63,21 @@ void SpriteView::saveFile()
 
         // Write down in ASCII Text
         // Writing down Height and Width
-        ASCII_text += QString(ui->tableWidget->rowCount()) + " " + QString(ui->tableWidget->columnCount()) + QString("\n");
+        ASCII_text += QString::number(rows_) + " " + QString::number(columns_) + QString("\n");
+        // Writing down Number of Frames
+        ASCII_text += QString::number(frameCount) + QString("\n");
         // Writing down Pixels
-        for(auto i = frame.pixels.begin(); i != frame.pixels.end(); i++)
+        foreach (Frame p, f)
         {
-            for (auto j = i->begin(); j != i->end(); j++)
-            {
-                std::tuple<int, int, int, int> temp = *j;
-                ASCII_text += QString(std::get<0>(temp)) + " " + QString(std::get<1>(temp)) + " " + QString(std::get<2>(temp)) + " " + QString(std::get<3>(temp)) + " ";
-            }
-            ASCII_text += QString("\n");
+            ASCII_text += p.toString();
         }
 
-        qDebug() << ASCII_text;
-
-        QDataStream out(&file);
-		// NOTE: sorry, i was running qt4 and this wouldn't compile - Matt
-        //out.setVersion(QDataStream::Qt_5_9);
-        out << ASCII_text; // to save data to file
+        QTextStream stream(&file);
+        stream << ASCII_text; // to save data to file
     }
 }
 
-void SpriteView::loadFile()
+void SpriteView::openFile()
 {
     QString file_name = QFileDialog::getOpenFileName(this,
                                                 tr("Open Sprite Sheet"), "",
@@ -96,15 +97,20 @@ void SpriteView::loadFile()
 
         // Start reading information from file.
         QTextStream in(&file);
-        // NOTE: sorry, i was running qt4 and this wouldn't compile - Matt
-        frames.clear();
-        //in >> frames; // to load data to file
+
+        //frames.clear();
+        //ui->framesTable->clearContents();
 
         QStringList height_and_width = in.readLine().split(" ");
-        int height = height_and_width[0].toInt();
-        int width = height_and_width[1].toInt();
+        rows_ = height_and_width[0].toInt();
+        columns_ = height_and_width[1].toInt();
 
         //initTableItems(height, width);
+        frameCount = 0;
+        initMainDrawBoxItems(rows_, columns_);
+        ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+        ui->tableWidget->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+        initNewFrame();
 
         QString frame = in.readLine();
 
@@ -115,7 +121,7 @@ void SpriteView::loadFile()
         {
             int y = 0;
             // Looping to draw all of the pixels
-            while (y < height)
+            while (y < rows_)
             {
                 int x = 0;
                 QString current_line = in.readLine();
@@ -124,16 +130,41 @@ void SpriteView::loadFile()
                 // To set each pixel with the correct color
                 for (int i = 0; i <= colors.size() - 4; i += 4)
                 {
-                    //tableWidget->item(y, x)->setBackgroundColor(QColor(colors[i].toInt(),colors[i+1].toInt(),colors[i+2].toInt(),colors[i+3].toInt()));
+                    activeColor = QColor(colors[i].toInt(),colors[i+1].toInt(),colors[i+2].toInt(),colors[i+3].toInt());
+                    colorCell(y, x);
                     x++;
                 }
                 y++;
             }
+            // Check to see if there are more frames before adding another frame
+            if (!in.atEnd())
+            {
+                // Add Frame here
+                initNewFrame();
+            }
             current_frame++;
         }
+        // Reset activeColor
+        setActiveColor(QColor(0, 0, 0, 255));
     }
 }
 
+/*
+ * New File button is clicked on
+ */
+void SpriteView::newFile()
+{
+    Form popup;
+    if(popup.exec() == QDialog::Accepted)
+    {
+        rows_ = popup.getHeight();
+        columns_ = popup.getWidth();
+        initMainDrawBoxItems(rows_, columns_);
+        ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+        ui->tableWidget->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+        initNewFrame();
+    }
+}
 
 // Initialize the items in the main draw box so that we can
 // change the color of them
@@ -175,6 +206,7 @@ void SpriteView::initNewFrame()
 
 	// Set this to be the current frame(/TableWidget)
 	currentTableWidget = newFrame;
+    emit createFrame(rows_, columns_);
 }
 
 /*
@@ -212,8 +244,6 @@ void SpriteView::initFrameItem(QTableWidget *newFrame)
     }
 }
 
-
-
 /*
  * Copy all of the colors in one QTableWidget to another
  * (this is used for copying from side panel frame to main draw window)
@@ -234,7 +264,6 @@ void SpriteView::copyQTableWidgetContents(QTableWidget* from, QTableWidget* to) 
 	}
 }
 
-
 /*
  * Change the active pen color and the color displayed in the box
  */
@@ -245,7 +274,6 @@ void SpriteView::setActiveColor(QColor color)
 	ui->colorButton->setAutoFillBackground(true);
 	ui->colorButton->setFlat(true);
 }
-
 
 /*
  * User clicked to change color of pen
@@ -264,37 +292,20 @@ void SpriteView::on_colorButton_clicked()
  *
  * so color both the QWidgetTable for the main drawing box and the current frame
  */
-void SpriteView::on_tableWidget_cellEntered(int row, int column)
+void SpriteView::colorCell(int row, int column)
 {
 	// change the color of the currently displayed drawing
-	ui->tableWidget->item(row, column)->setBackground(activeColor);
-
+    ui->tableWidget->item(row, column)->setBackground(activeColor);
 	// also change the color of the current selected frame
     currentTableWidget->item(row,column)->setBackground(activeColor);
+    std::tuple<int, int, int, int> color (activeColor.red(), activeColor.green(), activeColor.blue(), activeColor.alpha());
+    emit pixelColor(color);
 }
 
 void SpriteView::on_eraseButton_clicked()
 {
     setActiveColor(QColor(255, 255, 255, 255));
 }
-
-/*
- * New File button is clicked on 
- */
-void SpriteView::on_actionNew_File_triggered()
-{
-    Form popup;
-    if(popup.exec() == QDialog::Accepted)
-    {
-        rows_ = popup.getHeight();
-        columns_ = popup.getWidth();
-        initMainDrawBoxItems(popup.getHeight(), popup.getWidth());
-        ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-        ui->tableWidget->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-        initNewFrame();
-    }
-}
-
 
 /*
  * Called when any of the cells in the frame preview is clicked
@@ -310,7 +321,6 @@ void SpriteView::onFrameSelected(QTableWidgetItem *item)
 	copyQTableWidgetContents(parent, ui->tableWidget); 
 	currentTableWidget = parent;
 }
-
 
 SpriteView::~SpriteView()
 {

@@ -6,6 +6,7 @@
 #include <cstdlib>
 #include <QVector>
 #include <tuple>
+#include <iostream>
 #include "frame.h"
 
 const int SPRITE_SIZE = 32;
@@ -19,11 +20,16 @@ public:
 
 signals:
 	void editCompleted(const QString &);
+     void getFrame(QVector<Frame> frame);
 
 public slots:
 //    void getTable(QTableWidget);
-    void newFrame();
+    void newFrame(int height, int width);
+    void setFramePixel(int x, int y);
+    void setColor(std::tuple<int, int, int, int> c);
     void outputFramesData(Frame data);
+    void saveFrame();
+
 private:
     QVector<Frame> frames;
     int currFrame;
@@ -31,7 +37,6 @@ private:
     int pixelCount;
 
     int fps;
-    void saveFrame();
     Frame loadFrame();
     void exportGif();
 

@@ -13,6 +13,7 @@
 #include <QMessageBox>
 #include <QDebug>
 #include <tuple>
+#include <iostream>
 #include "model.h"
 #include "frame.h"
 #include "form.h"
@@ -31,24 +32,20 @@ class SpriteView : public QMainWindow
 public:
     explicit SpriteView(Model& model, QWidget *parent = 0);
     ~SpriteView();
+
 signals:
     void frameCreated(Frame frame);
+    void createFrame(int height, int width);
+    void pixelColor(std::tuple<int,int,int,int> c);
 
 private slots:
     void on_colorButton_clicked();
-
-    void on_tableWidget_cellEntered(int row, int column);
-
+    void colorCell(int row, int column);
     void on_eraseButton_clicked();
-
-    void on_actionNew_File_triggered();
-
-    void saveFile();
-
-    void loadFile();
-
+    void newFile();
+    void saveFile(QVector<Frame>);
+    void openFile();
     void initNewFrame();
-
     void onFrameSelected(QTableWidgetItem *item);
 
 private:
@@ -60,17 +57,16 @@ private:
 	QColor blankColor;
     int frameCount;
     int currentFrameNum;
-    void initMainDrawBoxItems(int, int);
-    void initFrameItem(QTableWidget *newFrame);
-	void setActiveColor(QColor color);
-	void copyQTableWidgetContents(QTableWidget* from, QTableWidget* to); 
-	QColor getActiveColor();
-	QVector<Frame> frames;
-    QString ASCII_text;
-
+    QVector<Frame> frames;
     Form *popup;
     int rows_;
     int columns_;
+
+    void initMainDrawBoxItems(int, int);
+    void initFrameItem(QTableWidget *newFrame);
+    void setActiveColor(QColor color);
+    void copyQTableWidgetContents(QTableWidget* from, QTableWidget* to);
+    QColor getActiveColor();
 };
 
 #endif // SPRITEVIEW_H
