@@ -33,6 +33,7 @@ public:
     ~SpriteView();
 signals:
     void frameCreated(Frame frame);
+    void exportGif(QString fileName, int rows, int columns);
 
 private slots:
     void on_colorButton_clicked();
@@ -46,6 +47,8 @@ private slots:
     void saveFile();
 
     void loadFile();
+
+    void exportGifFileWindow();
 
     void initNewFrame();
 

@@ -29,6 +29,9 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
     connect(ui->actionSave_File, SIGNAL(triggered(bool)), this, SLOT(saveFile()));
     connect(ui->actionOpen_File, SIGNAL(triggered(bool)), this, SLOT(loadFile()));
 
+    connect(ui->actionExport_Gif, SIGNAL(triggered(bool)), this, SLOT(exportGifFileWindow()));
+    connect(this, SIGNAL(exportGif(QString, int, int)), &model, SLOT(exportGifFile(QString, int, int)));
+
 }
 
 void SpriteView::saveFile()
@@ -134,6 +137,13 @@ void SpriteView::loadFile()
     }
 }
 
+void SpriteView::exportGifFileWindow()
+{
+    QString file_name = QFileDialog::getSaveFileName(this,
+                                                tr("Export Sprite Sheet as GIF"), "",
+                                                tr("GIF (*.gif)"));
+    emit exportGif(file_name, rows_, columns_);
+}
 
 // Initialize the items in the main draw box so that we can
 // change the color of them
