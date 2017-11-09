@@ -49,6 +49,15 @@ QVariant Model::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
+void Model::setFramePixel(int x, int y)
+{
+    frames[currFrame].setPixel(x, y);
+}
+
+void Model::setColor(std::tuple<int, int, int, int> c)
+{
+    frames[currFrame].setColor(c);
+}
 
 bool Model::setData(const QModelIndex & index, const QVariant & value, int role)
 {
