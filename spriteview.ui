@@ -261,7 +261,7 @@
      <x>0</x>
      <y>0</y>
      <width>913</width>
-     <height>26</height>
+     <height>19</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuSprite_Editor">
@@ -271,7 +271,6 @@
     <addaction name="actionNew_File"/>
     <addaction name="actionOpen_File"/>
     <addaction name="actionSave_File"/>
-    <addaction name="actionExport_Gif"/>
    </widget>
    <addaction name="menuSprite_Editor"/>
   </widget>
@@ -313,11 +312,6 @@
   <action name="actionLoad_File">
    <property name="text">
     <string>Load File</string>
-   </property>
-  </action>
-  <action name="actionExport_Gif">
-   <property name="text">
-    <string>Export Gif</string>
    </property>
   </action>
  </widget>

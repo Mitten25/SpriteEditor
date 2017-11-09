@@ -13,6 +13,7 @@
 #include <QMessageBox>
 #include <QDebug>
 #include <tuple>
+#include <iostream>
 #include "model.h"
 #include "frame.h"
 #include "form.h"
@@ -31,14 +32,13 @@ class SpriteView : public QMainWindow
 public:
     explicit SpriteView(Model& model, QWidget *parent = 0);
     ~SpriteView();
+
 signals:
     void frameCreated(Frame frame);
     void createFrame(int height, int width);
     void pixelColor(std::tuple<int,int,int,int> c);
-    void exportGif(QString fileName, int rows, int columns);
 
 private slots:
-
     void on_colorButton_clicked();
     void colorCell(int row, int column);
     void on_eraseButton_clicked();
@@ -47,18 +47,18 @@ private slots:
     void openFile();
     void initNewFrame();
     void onFrameSelected(QTableWidgetItem *item);
-    void exportGifFileWindow();
 
 private:
     Ui::SpriteView *ui;
-    // the widget for the currently active frame
-    QTableWidget* currentTableWidget;
-    int tableSize;
-    QColor activeColor;
-    QColor blankColor;
+	// the widget for the currently active frame
+	QTableWidget* currentTableWidget; 
+	int tableSize;
+	QColor activeColor;
+	QColor blankColor;
     int frameCount;
     int currentFrameNum;
     QVector<Frame> frames;
+    Form *popup;
     int rows_;
     int columns_;
 

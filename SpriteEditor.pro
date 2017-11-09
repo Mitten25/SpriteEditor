@@ -40,25 +40,3 @@ HEADERS += \
 FORMS += \
         spriteview.ui \
     form.ui
-
-
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/ImageMagick-6.8.5/lib/libMagick++-6.Q16.dll
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/ImageMagick-6.8.5/lib/libMagick++-6.Q16.dlld
-else:unix: LIBS += -L$$PWD/ImageMagick-6.8.5/lib/ -llibMagick++-6.Q16.dll
-
-INCLUDEPATH += $$PWD/ImageMagick-6.8.5/include
-DEPENDPATH += $$PWD/ImageMagick-6.8.5/include
-
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/ImageMagick-6.8.5/lib/libMagickCore-6.Q16.dll
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/ImageMagick-6.8.5/lib/libMagickCore-6.Q16.dlld
-else:unix: LIBS += -L$$PWD/ImageMagick-6.8.5/lib/ -llibMagickCore-6.Q16.dll
-
-INCLUDEPATH += $$PWD/ImageMagick-6.8.5/include
-DEPENDPATH += $$PWD/ImageMagick-6.8.5/include
-
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/ImageMagick-6.8.5/lib/libMagickWand-6.Q16.dll
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/ImageMagick-6.8.5/lib/libMagickWand-6.Q16.dlld
-else:unix: LIBS += -L$$PWD/ImageMagick-6.8.5/lib/ -llibMagickWand-6.Q16.dll
-
-INCLUDEPATH += $$PWD/ImageMagick-6.8.5/include
-DEPENDPATH += $$PWD/ImageMagick-6.8.5/include

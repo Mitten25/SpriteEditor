@@ -6,10 +6,8 @@
 #include <cstdlib>
 #include <QVector>
 #include <tuple>
-#include <QImage>
-#include <QPainter>
+#include <iostream>
 #include "frame.h"
-#include "ImageMagick-6.8.5/include/ImageMagick-6/Magick++.h"
 
 const int SPRITE_SIZE = 32;
 
@@ -21,8 +19,8 @@ public:
     explicit Model(QObject *parent);
 
 signals:
-    void editCompleted(const QString &);
-    void getFrame(QVector<Frame> frame);
+	void editCompleted(const QString &);
+     void getFrame(QVector<Frame> frame);
 
 public slots:
 //    void getTable(QTableWidget);
@@ -31,7 +29,6 @@ public slots:
     void setColor(std::tuple<int, int, int, int> c);
     void outputFramesData(Frame data);
     void saveFrame();
-    void exportGifFile(QString fileName, int rows, int columns);
 
 private:
     QVector<Frame> frames;
@@ -41,7 +38,7 @@ private:
 
     int fps;
     Frame loadFrame();
-    QVector<Magick::Image> framesToImages(int rows, int columns);
+    void exportGif();
 
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;

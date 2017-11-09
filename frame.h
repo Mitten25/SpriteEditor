@@ -20,7 +20,7 @@ public:
     std::tuple<int, int, int, int> getPixel(int x, int y);
     void setPixel(int x, int y);
     void setColor(std::tuple <int, int, int, int> c);
-    static Frame fromTableWidget(QTableWidget* tableWidget);
+	static Frame fromTableWidget(QTableWidget* tableWidget);
     QString toString();
 
     std::tuple <int, int, int, int> color;
