@@ -37,6 +37,12 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
     connect(this, SIGNAL(createFrame(int,int)), &model, SLOT(newFrame(int,int)));
     connect(this, SIGNAL(pixelColor(std::tuple<int,int,int,int>)), &model, SLOT(setColor(std::tuple<int,int,int,int>)));
     connect(ui->tableWidget, SIGNAL(cellEntered(int,int)), &model, SLOT(setFramePixel(int,int)));
+
+    connect(ui->actionSave_File, SIGNAL(triggered(bool)), this, SLOT(saveFile()));
+    connect(ui->actionOpen_File, SIGNAL(triggered(bool)), this, SLOT(loadFile()));
+
+    connect(ui->actionExport_Gif, SIGNAL(triggered(bool)), this, SLOT(exportGifFileWindow()));
+    connect(this, SIGNAL(exportGif(QString, int, int)), &model, SLOT(exportGifFile(QString, int, int)));
 }
 
 void SpriteView::saveFile(QVector<Frame> f)
@@ -164,6 +170,15 @@ void SpriteView::newFile()
         ui->tableWidget->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
         initNewFrame();
     }
+}
+
+void SpriteView::exportGifFileWindow()
+{
+    QString file_name = QFileDialog::getSaveFileName(this,
+                                                tr("Export Sprite Sheet as GIF"), "",
+                                                tr("GIF (*.gif)"));
+    emit exportGif(file_name, rows_, columns_);
+>>>>>>> c1423051e12ab3c09295791310316f1739807279
 }
 
 // Initialize the items in the main draw box so that we can
