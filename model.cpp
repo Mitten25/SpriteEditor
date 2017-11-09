@@ -11,6 +11,7 @@ void Model::outputFramesData(Frame data)
     //frameData << data;
 
 }
+
 void Model::newFrame(int height, int width)
 {
     Frame temp(height, width);
@@ -37,24 +38,6 @@ Frame Model::loadFrame()
 //    currentTable = &table;
 //}
 
-<<<<<<< HEAD
-void Model::exportGif() 
-{
-    // TODO: 
-}
-
-void Model::setFramePixel(int x, int y)
-{
-    frames[currFrame].setPixel(x, y);
-}
-
-void Model::setColor(std::tuple<int, int, int, int> c)
-{
-    frames[currFrame].setColor(c);
-}
-
-=======
->>>>>>> c1423051e12ab3c09295791310316f1739807279
 QVariant Model::data(const QModelIndex &index, int role) const
 {
     if (role == Qt::DisplayRole)

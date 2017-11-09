@@ -6,12 +6,8 @@
 #include <cstdlib>
 #include <QVector>
 #include <tuple>
-<<<<<<< HEAD
-#include <iostream>
-=======
 #include <QImage>
 #include <QPainter>
->>>>>>> c1423051e12ab3c09295791310316f1739807279
 #include "frame.h"
 #include "ImageMagick-6.8.5/include/ImageMagick-6/Magick++.h"
 
@@ -25,8 +21,8 @@ public:
     explicit Model(QObject *parent);
 
 signals:
-	void editCompleted(const QString &);
-     void getFrame(QVector<Frame> frame);
+    void editCompleted(const QString &);
+    void getFrame(QVector<Frame> frame);
 
 public slots:
 //    void getTable(QTableWidget);
@@ -34,12 +30,9 @@ public slots:
     void setFramePixel(int x, int y);
     void setColor(std::tuple<int, int, int, int> c);
     void outputFramesData(Frame data);
-<<<<<<< HEAD
     void saveFrame();
-
-=======
     void exportGifFile(QString fileName, int rows, int columns);
->>>>>>> c1423051e12ab3c09295791310316f1739807279
+
 private:
     QVector<Frame> frames;
     int currFrame;

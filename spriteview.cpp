@@ -5,8 +5,8 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::SpriteView)
 {
+    //popup = new Form();
     ui->setupUi(this);
-
 	//tableWidget = ui->tableWidget;
 	// Color for blank background
 	QColor blankColor("white");
@@ -20,12 +20,8 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
     frameCount = 0;
     currentFrameNum = 0;
 
-	// TODO: we should probably set up more signals and slots so that
-	// the model can control more
-
     connect(ui->addFrameButton, SIGNAL(clicked(bool)), this, SLOT(initNewFrame()));
     connect(this, SIGNAL(frameCreated(Frame)), &model, SLOT(outputFramesData(Frame)));
-<<<<<<< HEAD
     connect(ui->tableWidget, SIGNAL(cellEntered(int,int)), this, SLOT(colorCell(int,int)));
 
     // File Menu
@@ -38,15 +34,10 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
     connect(this, SIGNAL(createFrame(int,int)), &model, SLOT(newFrame(int,int)));
     connect(this, SIGNAL(pixelColor(std::tuple<int,int,int,int>)), &model, SLOT(setColor(std::tuple<int,int,int,int>)));
     connect(ui->tableWidget, SIGNAL(cellEntered(int,int)), &model, SLOT(setFramePixel(int,int)));
-=======
-
-    connect(ui->actionSave_File, SIGNAL(triggered(bool)), this, SLOT(saveFile()));
-    connect(ui->actionOpen_File, SIGNAL(triggered(bool)), this, SLOT(loadFile()));
 
     connect(ui->actionExport_Gif, SIGNAL(triggered(bool)), this, SLOT(exportGifFileWindow()));
     connect(this, SIGNAL(exportGif(QString, int, int)), &model, SLOT(exportGifFile(QString, int, int)));
 
->>>>>>> c1423051e12ab3c09295791310316f1739807279
 }
 
 void SpriteView::saveFile(QVector<Frame> f)
@@ -159,7 +150,6 @@ void SpriteView::openFile()
     }
 }
 
-<<<<<<< HEAD
 /*
  * New File button is clicked on
  */
@@ -175,14 +165,14 @@ void SpriteView::newFile()
         ui->tableWidget->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
         initNewFrame();
     }
-=======
+}
+
 void SpriteView::exportGifFileWindow()
 {
     QString file_name = QFileDialog::getSaveFileName(this,
                                                 tr("Export Sprite Sheet as GIF"), "",
                                                 tr("GIF (*.gif)"));
     emit exportGif(file_name, rows_, columns_);
->>>>>>> c1423051e12ab3c09295791310316f1739807279
 }
 
 // Initialize the items in the main draw box so that we can
@@ -225,7 +215,6 @@ void SpriteView::initNewFrame()
 
 	// Set this to be the current frame(/TableWidget)
 	currentTableWidget = newFrame;
-    emit createFrame(rows_, columns_);
 }
 
 /*
@@ -263,6 +252,8 @@ void SpriteView::initFrameItem(QTableWidget *newFrame)
     }
 }
 
+
+
 /*
  * Copy all of the colors in one QTableWidget to another
  * (this is used for copying from side panel frame to main draw window)
@@ -283,6 +274,7 @@ void SpriteView::copyQTableWidgetContents(QTableWidget* from, QTableWidget* to) 
 	}
 }
 
+
 /*
  * Change the active pen color and the color displayed in the box
  */
@@ -294,6 +286,7 @@ void SpriteView::setActiveColor(QColor color)
 	ui->colorButton->setFlat(true);
 }
 
+
 /*
  * User clicked to change color of pen
  */
@@ -304,21 +297,6 @@ void SpriteView::on_colorButton_clicked()
 	if (chosenColor.isValid()) {
 		setActiveColor(chosenColor);
 	}
-}
-
-/*
- * User is clicking and dragging in the drawing box
- *
- * so color both the QWidgetTable for the main drawing box and the current frame
- */
-void SpriteView::colorCell(int row, int column)
-{
-	// change the color of the currently displayed drawing
-    ui->tableWidget->item(row, column)->setBackground(activeColor);
-	// also change the color of the current selected frame
-    currentTableWidget->item(row,column)->setBackground(activeColor);
-    std::tuple<int, int, int, int> color (activeColor.red(), activeColor.green(), activeColor.blue(), activeColor.alpha());
-    emit pixelColor(color);
 }
 
 void SpriteView::on_eraseButton_clicked()
@@ -340,6 +318,22 @@ void SpriteView::onFrameSelected(QTableWidgetItem *item)
 	copyQTableWidgetContents(parent, ui->tableWidget); 
 	currentTableWidget = parent;
 }
+
+/*
+ * User is clicking and dragging in the drawing box
+ *
+ * so color both the QWidgetTable for the main drawing box and the current frame
+ */
+void SpriteView::colorCell(int row, int column)
+{
+    // change the color of the currently displayed drawing
+    ui->tableWidget->item(row, column)->setBackground(activeColor);
+    // also change the color of the current selected frame
+    currentTableWidget->item(row,column)->setBackground(activeColor);
+    std::tuple<int, int, int, int> color (activeColor.red(), activeColor.green(), activeColor.blue(), activeColor.alpha());
+    emit pixelColor(color);
+}
+
 
 SpriteView::~SpriteView()
 {
