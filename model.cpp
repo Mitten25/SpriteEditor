@@ -43,7 +43,7 @@ QVector<QImage> Model::framesToImages(int rows, int columns)
             for(k = 0; k < columns; k++)
             {
                 std::tuple<int, int, int, int> values;
-                values = frames[i].pixels[j][k];
+                values = frames[i].pixels[k][j];
                 QRgb value = qRgb(std::get<0>(values), std::get<1>(values), std::get<2>(values));
                 temp.setPixel(j, k, value);
             }

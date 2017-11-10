@@ -121,6 +121,7 @@ void SpriteView::openFile()
         initNewFrame();
         initPreview();
         ui->addFrameButton->setEnabled(true);
+        ui->fpsSlider->setEnabled(true);
 
         QString frame = in.readLine();
 
@@ -170,6 +171,7 @@ void SpriteView::newFile()
         rows_ = popup.getHeight();
         columns_ = popup.getWidth();
         ui->addFrameButton->setEnabled(true);
+        ui->fpsSlider->setEnabled(true);
         initMainDrawBoxItems(rows_, columns_);
         ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
         ui->tableWidget->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
