@@ -8,13 +8,13 @@ Frame::Frame(int height, int width)
     column = width;
 
     //Will set everything to white
-    for (int x = 0; x < column; x++)
+    for (int y = 0; y < row; y++)
     {
-        pixels.append(QVector<std::tuple<int,int,int,int>>(row));
-        for (int y = 0; y < row; y++)
+        pixels.append(QVector<std::tuple<int,int,int,int>>(column));
+        for (int x = 0; x < column; x++)
         {
             std::tuple<int,int,int,int> white (255,255,255,0);
-            pixels[x][y] = white;
+            pixels[y][x] = white;
         }
     }
 }
