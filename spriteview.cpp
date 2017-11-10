@@ -31,6 +31,7 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
     connect(ui->actionSave_File, SIGNAL(triggered(bool)), &model, SLOT(saveFrame()));
     connect(&model, SIGNAL(getFrame(QVector<Frame>)), this, SLOT(saveFile(QVector<Frame>)));
 
+    connect(ui->actionOpen_File, SIGNAL(triggered(bool)), &model, SLOT(loadFrame()));
     connect(ui->actionOpen_File, SIGNAL(triggered(bool)), this, SLOT(openFile()));
     connect(this, SIGNAL(loadColor(int,int)), &model, SLOT(setFramePixel(int,int)));
 

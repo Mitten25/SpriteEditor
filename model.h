@@ -34,6 +34,7 @@ public slots:
     void updateFPS(int f);
     void exportGif(QString file_name, int rows, int columns);
     void currentFrame(int,int);
+    void LoadFrame();
 
 private:
     QVector<Frame> frames;

@@ -19,6 +19,11 @@ void Model::saveFrame()
     //need else for layer number
 }
 
+void Model::LoadFrame()
+{
+    frames.clear();
+}
+
 void Model::exportGif(QString file_name, int rows, int columns)
 {
     std::cout<< "here" << std::endl;
@@ -33,7 +38,7 @@ void Model::exportGif(QString file_name, int rows, int columns)
 
 void Model::currentFrame(int x, int y)
 {
-    currFrame = x-1;
+    currFrame = x;
 }
 
 QVector<QImage> Model::framesToImages(int rows, int columns)

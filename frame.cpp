@@ -64,11 +64,11 @@ Frame Frame::fromTableWidget(QTableWidget* tableWidget)
 QString Frame::toString()
 {
     QString result;
-    for (int x = 0; x < column; x++)
+    for (int y = 0; y < row; y++)
     {
-        for (int y = 0; y < row; y++)
+        for (int x = 0; x < column; x++)
         {
-            std::tuple <int, int, int, int> temp = getPixel(x, y);
+            std::tuple <int, int, int, int> temp = getPixel(y, x);
             result += QString::number(std::get<0>(temp)) + " "
                     + QString::number(std::get<1>(temp)) + " "
                     + QString::number(std::get<2>(temp)) + " "
