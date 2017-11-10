@@ -185,7 +185,6 @@ void SpriteView::newFile()
         ui->tableWidget->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
         initNewFrame();
         initPreview();
-        timer->start(previewSecs);
     }
 }
 
@@ -257,8 +256,17 @@ void SpriteView::initFrameItem(QTableWidget *newFrame)
     newFrame->horizontalHeader()->setVisible(false);
     newFrame->setRowCount(rows_);
     newFrame->setColumnCount(columns_);
+    newFrame->verticalHeader()->setDefaultSectionSize(100/itemSizeD);
+    newFrame->horizontalHeader()->setDefaultSectionSize(100/itemSizeD);
+    newFrame->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
+    newFrame->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
 
-	// Connect this itemClicked signal to trigger the onFrameSelected
+    //disable selecting and editing cells
+    newFrame->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    newFrame->setFocusPolicy(Qt::NoFocus);
+    newFrame->setSelectionMode(QAbstractItemView::NoSelection);
+
+    // Connect this itemClicked signal to trigger the onFrameSelected
 	// (used for later clicking to set this to the current frame) 
     connect(newFrame, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(onFrameSelected(QTableWidgetItem*)));
 
@@ -267,13 +275,6 @@ void SpriteView::initFrameItem(QTableWidget *newFrame)
             QTableWidgetItem *newItem = new QTableWidgetItem();
             newItem->setBackground(QColor(0,0,0,0));
             newFrame->setItem(r, c, newItem);
-            newFrame->verticalHeader()->resizeSection(r, 100/itemSizeD);
-            newFrame->horizontalHeader()->resizeSection(c, 100/itemSizeD);
-
-            //disable selecting and editing cells
-            newFrame->setEditTriggers(QAbstractItemView::NoEditTriggers);
-            newFrame->setFocusPolicy(Qt::NoFocus);
-            newFrame->setSelectionMode(QAbstractItemView::NoSelection);
         }
     }
 }
@@ -291,14 +292,16 @@ void SpriteView::initPreview()
     ui->previewTable->horizontalHeader()->setVisible(false);
     ui->previewTable->setRowCount(rows_);
     ui->previewTable->setColumnCount(columns_);
+    ui->previewTable->verticalHeader()->setDefaultSectionSize(210/itemSizeD);
+    ui->previewTable->horizontalHeader()->setDefaultSectionSize(210/itemSizeD);
+    ui->previewTable->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
+    ui->previewTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
 
     for (int r = 0; r < rows_; r++) {
         for (int c = 0; c < columns_; c++) {
             QTableWidgetItem *newItem = new QTableWidgetItem();
             newItem->setBackground(QColor(0,0,0,0));
             ui->previewTable->setItem(r, c, newItem);
-            ui->previewTable->verticalHeader()->resizeSection(r, 200/itemSizeD);
-            ui->previewTable->horizontalHeader()->resizeSection(c, 200/itemSizeD);
         }
     }
 }
