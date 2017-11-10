@@ -33,6 +33,8 @@ public slots:
     void saveFrame();
     void updateFPS(int f);
     void exportGif(QString file_name, int rows, int columns);
+    void currentFrame(int,int);
+
 private:
     QVector<Frame> frames;
     int currFrame;
@@ -40,7 +42,6 @@ private:
     int pixelCount;
 
     int fps;
-    Frame loadFrame();
 
     QVector<QImage> framesToImages(int rows, int columns);
 

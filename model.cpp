@@ -31,6 +31,11 @@ void Model::exportGif(QString file_name, int rows, int columns)
     file.save(file_name);
 }
 
+void Model::currentFrame(int x, int y)
+{
+    currFrame = x-1;
+}
+
 QVector<QImage> Model::framesToImages(int rows, int columns)
 {
     QVector<QImage> images;
@@ -51,13 +56,6 @@ QVector<QImage> Model::framesToImages(int rows, int columns)
         images.append(temp);
     }
     return images;
-}
-
-Frame Model::loadFrame()
-{
-    // TODO: 
-    Frame placeholder;
-    return placeholder;
 }
 
 //void Model::getTable(QTableWidget table)

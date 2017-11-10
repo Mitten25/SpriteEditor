@@ -30,8 +30,12 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
     // File Menu
     connect(ui->actionSave_File, SIGNAL(triggered(bool)), &model, SLOT(saveFrame()));
     connect(&model, SIGNAL(getFrame(QVector<Frame>)), this, SLOT(saveFile(QVector<Frame>)));
+
     connect(ui->actionOpen_File, SIGNAL(triggered(bool)), this, SLOT(openFile()));
+    connect(this, SIGNAL(loadColor(int,int)), &model, SLOT(setFramePixel(int,int)));
+
     connect(ui->actionNew_File, SIGNAL(triggered(bool)), this, SLOT(newFile()));
+
     connect(ui->actionExport_GIF, SIGNAL(triggered(bool)), this, SLOT(exportGifWindow()));
     connect(this, SIGNAL(exportGifSig(QString, int, int)), &model, SLOT(exportGif(QString, int, int)));
 
@@ -39,6 +43,8 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
     connect(this, SIGNAL(createFrame(int,int)), &model, SLOT(newFrame(int,int)));
     connect(this, SIGNAL(pixelColor(std::tuple<int,int,int,int>)), &model, SLOT(setColor(std::tuple<int,int,int,int>)));
     connect(ui->tableWidget, SIGNAL(cellEntered(int,int)), &model, SLOT(setFramePixel(int,int)));
+
+    connect(ui->framesTable, SIGNAL(cellEntered(int,int)), &model, SLOT(currentFrame(int,int)));
 
     // Preview Animation
     timer = new QTimer(this);
@@ -143,6 +149,7 @@ void SpriteView::openFile()
                 {
                     activeColor = QColor(colors[i].toInt(),colors[i+1].toInt(),colors[i+2].toInt(),colors[i+3].toInt());
                     colorCell(y, x);
+                    emit loadColor(y, x);
                     x++;
                 }
                 y++;
