@@ -32,6 +32,8 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
     connect(&model, SIGNAL(getFrame(QVector<Frame>)), this, SLOT(saveFile(QVector<Frame>)));
     connect(ui->actionOpen_File, SIGNAL(triggered(bool)), this, SLOT(openFile()));
     connect(ui->actionNew_File, SIGNAL(triggered(bool)), this, SLOT(newFile()));
+    connect(ui->actionExport_GIF, SIGNAL(triggered(bool)), this, SLOT(exportGifWindow()));
+    connect(this, SIGNAL(exportGifSig(QString, int, int)), &model, SLOT(exportGif(QString, int, int)));
 
     // Create Frame in Model
     connect(this, SIGNAL(createFrame(int,int)), &model, SLOT(newFrame(int,int)));
@@ -174,6 +176,19 @@ void SpriteView::newFile()
         initNewFrame();
         initPreview();
         timer->start(previewSecs);
+    }
+}
+
+void SpriteView::exportGifWindow()
+{
+    QString file_name = QFileDialog::getSaveFileName(this,
+                                                tr("Export GIF"), "",
+                                                tr("GIF (*.gif)"));
+    if (file_name.isEmpty())
+        return;
+    else
+    {
+        emit exportGifSig(file_name, rows_, columns_);
     }
 }
 

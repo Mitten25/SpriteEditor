@@ -6,8 +6,11 @@
 #include <cstdlib>
 #include <QVector>
 #include <tuple>
+#include <QFile>
 #include <iostream>
 #include "frame.h"
+#include "qgifglobal.h"
+#include "qgifimage.h"
 
 const int SPRITE_SIZE = 32;
 
@@ -29,6 +32,7 @@ public slots:
     void setColor(std::tuple<int, int, int, int> c);
     void saveFrame();
     void updateFPS(int f);
+    void exportGif(QString file_name, int rows, int columns);
 private:
     QVector<Frame> frames;
     int currFrame;
@@ -37,8 +41,8 @@ private:
 
     int fps;
     Frame loadFrame();
-    void exportGif();
 
+    QVector<QImage> framesToImages(int rows, int columns);
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     bool setData(const QModelIndex & index, const QVariant & value, int role = Qt::EditRole);

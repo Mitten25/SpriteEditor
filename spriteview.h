@@ -38,6 +38,7 @@ signals:
     void frameCreated(Frame frame);
     void createFrame(int height, int width);
     void pixelColor(std::tuple<int,int,int,int> c);
+    void exportGifSig(QString file_name, int rows, int columns);
 
 private slots:
     void on_colorButton_clicked();
@@ -47,6 +48,7 @@ private slots:
     void saveFile(QVector<Frame>);
     void openFile();
     void initNewFrame();
+    void exportGifWindow();
     void onFrameSelected(QTableWidgetItem *item);
     void previewAnim();
     void changeFPS(int);
