@@ -19,12 +19,12 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
     columns_ = 8;
     frameCount = 0;
     currentFrameNum = 0;
-
+    previewSecs = 0;
+    currentPrev= 0;
 	// TODO: we should probably set up more signals and slots so that
 	// the model can control more
 
     connect(ui->addFrameButton, SIGNAL(clicked(bool)), this, SLOT(initNewFrame()));
-    connect(this, SIGNAL(frameCreated(Frame)), &model, SLOT(outputFramesData(Frame)));
     connect(ui->tableWidget, SIGNAL(cellEntered(int,int)), this, SLOT(colorCell(int,int)));
 
     // File Menu
@@ -37,6 +37,12 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
     connect(this, SIGNAL(createFrame(int,int)), &model, SLOT(newFrame(int,int)));
     connect(this, SIGNAL(pixelColor(std::tuple<int,int,int,int>)), &model, SLOT(setColor(std::tuple<int,int,int,int>)));
     connect(ui->tableWidget, SIGNAL(cellEntered(int,int)), &model, SLOT(setFramePixel(int,int)));
+
+    // Preview Animation
+    timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(previewAnim()));
+    connect(ui->fpsSlider, SIGNAL(valueChanged(int)), &model, SLOT(updateFPS(int)));
+    connect(ui->fpsSlider, SIGNAL(valueChanged(int)), this, SLOT(changeFPS(int)));
 }
 
 void SpriteView::saveFile(QVector<Frame> f)
@@ -111,6 +117,8 @@ void SpriteView::openFile()
         ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
         ui->tableWidget->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
         initNewFrame();
+        initPreview();
+        ui->addFrameButton->setEnabled(true);
 
         QString frame = in.readLine();
 
@@ -159,10 +167,13 @@ void SpriteView::newFile()
     {
         rows_ = popup.getHeight();
         columns_ = popup.getWidth();
+        ui->addFrameButton->setEnabled(true);
         initMainDrawBoxItems(rows_, columns_);
         ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
         ui->tableWidget->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
         initNewFrame();
+        initPreview();
+        timer->start(previewSecs);
     }
 }
 
@@ -188,7 +199,7 @@ void SpriteView::initNewFrame()
     ui->framesTable->setRowCount(frameCount+1);
     ui->framesTable->setColumnCount(1);
     ui->framesTable->setItem(frameCount+1, 1, newRow);
-    ui->framesTable->verticalHeader()->resizeSection(frameCount, 125);
+    ui->framesTable->verticalHeader()->resizeSection(frameCount, 100);
     ui->framesTable->horizontalHeader()->resizeSection(frameCount, 200);
     ui->framesTable->horizontalHeader()->setVisible(false);
 
@@ -214,25 +225,23 @@ void SpriteView::initNewFrame()
  */ 
 void SpriteView::initFrameItem(QTableWidget *newFrame)
 {
-    int rows = rows_;
-    int columns = columns_;
-    int itemSizeD = rows;
-    if(rows < columns){itemSizeD = columns;}
+    int itemSizeD = rows_;
+    if(rows_ < columns_){itemSizeD = columns_;}
     //initialize items in table
     newFrame->verticalHeader()->setVisible(false);
     newFrame->horizontalHeader()->setVisible(false);
-    newFrame->setRowCount(rows);
-    newFrame->setColumnCount(columns);
+    newFrame->setRowCount(rows_);
+    newFrame->setColumnCount(columns_);
 
 	// Connect this itemClicked signal to trigger the onFrameSelected
 	// (used for later clicking to set this to the current frame) 
     connect(newFrame, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(onFrameSelected(QTableWidgetItem*)));
 
-    for (int r = 0; r < rows; r++) {
-        for (int c = 0; c < columns; c++) {
+    for (int r = 0; r < rows_; r++) {
+        for (int c = 0; c < columns_; c++) {
             QTableWidgetItem *newItem = new QTableWidgetItem();
+            newItem->setBackground(QColor(0,0,0,0));
             newFrame->setItem(r, c, newItem);
-			newItem->setBackground(QColor("white"));
             newFrame->verticalHeader()->resizeSection(r, 100/itemSizeD);
             newFrame->horizontalHeader()->resizeSection(c, 100/itemSizeD);
 
@@ -244,6 +253,30 @@ void SpriteView::initFrameItem(QTableWidget *newFrame)
     }
 }
 
+/*
+ * Initializes the animation preview table
+ *
+ */
+void SpriteView::initPreview()
+{
+    int itemSizeD = rows_;
+    if(rows_ < columns_){itemSizeD = columns_;}
+    //initialize items in table
+    ui->previewTable->verticalHeader()->setVisible(false);
+    ui->previewTable->horizontalHeader()->setVisible(false);
+    ui->previewTable->setRowCount(rows_);
+    ui->previewTable->setColumnCount(columns_);
+
+    for (int r = 0; r < rows_; r++) {
+        for (int c = 0; c < columns_; c++) {
+            QTableWidgetItem *newItem = new QTableWidgetItem();
+            newItem->setBackground(QColor(0,0,0,0));
+            ui->previewTable->setItem(r, c, newItem);
+            ui->previewTable->verticalHeader()->resizeSection(r, 200/itemSizeD);
+            ui->previewTable->horizontalHeader()->resizeSection(c, 200/itemSizeD);
+        }
+    }
+}
 /*
  * Copy all of the colors in one QTableWidget to another
  * (this is used for copying from side panel frame to main draw window)
@@ -261,7 +294,7 @@ void SpriteView::copyQTableWidgetContents(QTableWidget* from, QTableWidget* to) 
 			QColor fromColor = from->item(r, c)->background().color();
 			to->item(r, c)->setBackground(fromColor);
 		}
-	}
+    }
 }
 
 /*
@@ -304,7 +337,7 @@ void SpriteView::colorCell(int row, int column)
 
 void SpriteView::on_eraseButton_clicked()
 {
-    setActiveColor(QColor(255, 255, 255, 255));
+    setActiveColor(QColor(255, 255, 255, 0));
 }
 
 /*
@@ -320,6 +353,35 @@ void SpriteView::onFrameSelected(QTableWidgetItem *item)
 	// Copy the contents of this frame to the main draw box 
 	copyQTableWidgetContents(parent, ui->tableWidget); 
 	currentTableWidget = parent;
+}
+
+/*
+ * Called according to the timer and fps
+ * Copies frames and plays animation
+ */
+void SpriteView::previewAnim()
+{
+    for (int r = 0; r < rows_; r++) {
+        for (int c = 0; c < columns_; c++) {
+            QTableWidget *temp = (QTableWidget*)ui->framesTable->cellWidget(currentPrev,0);
+            copyQTableWidgetContents(temp, ui->previewTable);
+        }
+    }
+    if(currentPrev < frameCount-1)
+        currentPrev++;
+    else
+        currentPrev = 0;
+}
+
+/*
+ * Updates the fps when fps slider is changed
+ */
+void SpriteView::changeFPS(int fps)
+{
+    if(fps!=0)
+        timer->start((1000/fps));
+    else
+        timer->stop();
 }
 
 SpriteView::~SpriteView()

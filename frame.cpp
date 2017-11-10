@@ -13,7 +13,7 @@ Frame::Frame(int height, int width)
         pixels.append(QVector<std::tuple<int,int,int,int>>(row));
         for (int y = 0; y < row; y++)
         {
-            std::tuple<int,int,int,int> white (255,255,255,255);
+            std::tuple<int,int,int,int> white (255,255,255,0);
             pixels[x][y] = white;
         }
     }

@@ -27,9 +27,8 @@ public slots:
     void newFrame(int height, int width);
     void setFramePixel(int x, int y);
     void setColor(std::tuple<int, int, int, int> c);
-    void outputFramesData(Frame data);
     void saveFrame();
-
+    void updateFPS(int f);
 private:
     QVector<Frame> frames;
     int currFrame;

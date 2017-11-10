@@ -4,13 +4,7 @@ Model::Model(QObject *parent) : QObject (parent)
 {
 
 }
-void Model::outputFramesData(Frame data)
-{
-	// TODO: what is this method even supposed to do?
-    //QVector<QVector<std::tuple<int,int,int,int>>> frameData;
-    //frameData << data;
 
-}
 void Model::newFrame(int height, int width)
 {
     Frame temp(height, width);
@@ -80,5 +74,7 @@ Qt::ItemFlags Model::flags(const QModelIndex & /*index*/) const
     return Qt::ItemIsSelectable |  Qt::ItemIsEditable | Qt::ItemIsEnabled ;
 }
 
-
-
+void Model::updateFPS(int f)
+{
+    fps = f;
+}

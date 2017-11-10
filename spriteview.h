@@ -12,6 +12,7 @@
 #include <QFile>
 #include <QMessageBox>
 #include <QDebug>
+#include <QTimer>
 #include <tuple>
 #include <iostream>
 #include "model.h"
@@ -47,6 +48,8 @@ private slots:
     void openFile();
     void initNewFrame();
     void onFrameSelected(QTableWidgetItem *item);
+    void previewAnim();
+    void changeFPS(int);
 
 private:
     Ui::SpriteView *ui;
@@ -61,9 +64,13 @@ private:
     Form *popup;
     int rows_;
     int columns_;
+    QTimer *timer;
+    int previewSecs;
+    int currentPrev;
 
     void initMainDrawBoxItems(int, int);
     void initFrameItem(QTableWidget *newFrame);
+    void initPreview();
     void setActiveColor(QColor color);
     void copyQTableWidgetContents(QTableWidget* from, QTableWidget* to);
     QColor getActiveColor();
