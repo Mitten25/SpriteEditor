@@ -39,6 +39,7 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
 
     connect(ui->actionExport_GIF, SIGNAL(triggered(bool)), this, SLOT(exportGifWindow()));
     connect(this, SIGNAL(exportGifSig(QString, int, int)), &model, SLOT(exportGif(QString, int, int)));
+    connect(this, SIGNAL(updateSpeed(int)), &model, SLOT(updateSpeed(int)));
 
     // Create Frame in Model
     connect(this, SIGNAL(createFrame(int,int)), &model, SLOT(newFrame(int,int)));
@@ -419,10 +420,18 @@ void SpriteView::updatePrevImages(QVector<QImage> images)
  */
 void SpriteView::changeFPS(int fps)
 {
+    int speed;
     if(fps!=0)
-        timer->start((1000/fps));
+    {
+        speed = 1000/fps;
+        timer->start(speed);
+    }
     else
+    {
         timer->stop();
+        speed = 0;
+    }
+    emit updateSpeed(speed);
 }
 
 SpriteView::~SpriteView()

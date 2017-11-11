@@ -40,6 +40,7 @@ signals:
     void pixelColor(std::tuple<int,int,int,int> c);
     void exportGifSig(QString file_name, int rows, int columns);
     void loadColor(int,int);
+    void updateSpeed(int speed);
 
 private slots:
     void on_colorButton_clicked();

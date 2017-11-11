@@ -35,16 +35,19 @@ public slots:
     void exportGif(QString file_name, int rows, int columns);
     void currentFrame(int,int);
     void resetFrame();
+    void updateSpeed(int);
 
 private:
     QVector<Frame> frames;
     int currFrame;
     QTableWidget *currentTable;
     int pixelCount;
+    int speed;
 
     int fps;
 
     QVector<QImage> framesToImages(int rows, int columns);
+    void colorSection(int mult, QImage *image, int row, int column, QRgb value);
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     bool setData(const QModelIndex & index, const QVariant & value, int role = Qt::EditRole);

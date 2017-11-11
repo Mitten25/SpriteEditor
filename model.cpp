@@ -26,12 +26,16 @@ void Model::resetFrame()
 
 void Model::exportGif(QString file_name, int rows, int columns)
 {
-    std::cout<< "here" << std::endl;
+    if(speed == 0)
+    {
+        speed = 1;
+    }
+    int tempSpeed = -1*(1/speed);
     QGifImage file(file_name);
     QVector<QImage> images = framesToImages(rows, columns);
     for(int i = 0; i < images.length(); i++)
     {
-        file.addFrame(images[i]);
+        file.addFrame(images[i], tempSpeed);
     }
     file.save(file_name);
 }
@@ -45,22 +49,36 @@ QVector<QImage> Model::framesToImages(int rows, int columns)
 {
     QVector<QImage> images;
     int i, j, k;
+    int mult = 8;
     for(i = 0; i < frames.length(); i++)
     {
-        QImage temp(QSize(columns, rows), QImage::Format_ARGB32);
+        QImage temp(QSize(columns*mult, rows*mult), QImage::Format_ARGB32);
         for(k = 0; k < columns; k++)
         {
             for(j = 0; j < rows; j++)
             {
                 std::tuple<int, int, int, int> values;
-                values = frames[i].pixels[j][k];
+                values = frames[i].pixels[k][j];
                 QRgb value = qRgb(std::get<0>(values), std::get<1>(values), std::get<2>(values));
-                temp.setPixel(k, j, value);
+                colorSection(mult, &temp, j, k, value);
             }
         }
         images.append(temp);
     }
     return images;
+}
+
+void Model::colorSection(int mult, QImage *image, int row, int column, QRgb value)
+{
+    int finalX = row*mult + mult;
+    int finalY = column*mult + mult;
+    for(int placeX = row*mult; placeX < finalX; placeX++)
+    {
+        for(int placeY = column*mult; placeY < finalY; placeY++)
+        {
+            image->setPixel(placeX, placeY, value);
+        }
+    }
 }
 
 //void Model::getTable(QTableWidget table)
@@ -109,4 +127,9 @@ Qt::ItemFlags Model::flags(const QModelIndex & /*index*/) const
 void Model::updatePreview()
 {
     emit getImages(framesToImages(std::get<0>(frames[0].getSize()), std::get<1>(frames[0].getSize())));
+}
+
+void Model::updateSpeed(int pace)
+{
+    speed = pace;
 }
