@@ -42,10 +42,9 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
 
     // Create Frame in Model
     connect(this, SIGNAL(createFrame(int,int)), &model, SLOT(newFrame(int,int)));
+    connect(ui->framesTable, SIGNAL(cellEntered(int,int)), &model, SLOT(currentFrame(int,int)));
     connect(this, SIGNAL(pixelColor(std::tuple<int,int,int,int>)), &model, SLOT(setColor(std::tuple<int,int,int,int>)));
     connect(ui->tableWidget, SIGNAL(cellEntered(int,int)), &model, SLOT(setFramePixel(int,int)));
-
-    connect(ui->framesTable, SIGNAL(cellEntered(int,int)), &model, SLOT(currentFrame(int,int)));
 
     // Preview Animation
     timer = new QTimer(this);
