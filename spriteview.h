@@ -64,13 +64,11 @@ private:
 	QColor activeColor;
 	QColor blankColor;
     int frameCount;
-    int currentFrameNum;
     QVector<Frame> frames;
     Form *popup;
     int rows_;
     int columns_;
     QTimer *timer;
-    int previewSecs;
     int currentPrev;
     QVector<QImage> prevImages;
     void initMainDrawBoxItems(int, int);

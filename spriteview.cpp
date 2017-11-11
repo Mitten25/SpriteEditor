@@ -18,12 +18,9 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
     rows_ = 8;
     columns_ = 8;
     frameCount = 0;
-    currentFrameNum = 0;
-    previewSecs = 0;
     currentPrev= 0;
-	// TODO: we should probably set up more signals and slots so that
-	// the model can control more
 
+    // Add Frame
     connect(ui->addFrameButton, SIGNAL(clicked(bool)), this, SLOT(initNewFrame()));
 
     // File Menu
@@ -48,12 +45,12 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
     connect(this, SIGNAL(pixelColor(std::tuple<int,int,int,int>)), &model, SLOT(setColor(std::tuple<int,int,int,int>)));
     connect(ui->tableWidget, SIGNAL(cellEntered(int,int)), &model, SLOT(setFramePixel(int,int)));
 
-    // Preview Animation/*
+    // Preview Animation
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(previewAnim()));
     connect(ui->tableWidget, SIGNAL(cellEntered(int,int)), &model, SLOT(updatePreview()));
     connect(this, SIGNAL(createFrame(int,int)), &model, SLOT(updatePreview()));
-    //connect(ui->fpsSlider, SIGNAL(valueChanged(int)), &model, SLOT(updatePreview()));
+    connect(ui->fpsSlider, SIGNAL(valueChanged(int)), &model, SLOT(updatePreview()));
     connect(&model, SIGNAL(getImages(QVector<QImage>)), this, SLOT(updatePrevImages(QVector<QImage>)));
     connect(ui->fpsSlider, SIGNAL(valueChanged(int)), this, SLOT(changeFPS(int)));
 }
@@ -177,6 +174,7 @@ void SpriteView::newFile()
         rows_ = popup.getHeight();
         columns_ = popup.getWidth();
         initStartFrame();
+        ui->previewLabel->clear();
     }
 }
 
@@ -187,17 +185,19 @@ void SpriteView::initStartFrame()
 {
     // Reset UI
     frameCount = 0;
-    ui->fpsSlider->setValue(0);
     ui->framesTable->setRowCount(0);
     ui->framesTable->setColumnCount(0);
 
     ui->addFrameButton->setEnabled(true);
     ui->fpsSlider->setEnabled(true);
+    ui->fpsSlider->setValue(0);
+    prevImages.clear();
     initMainDrawBoxItems(rows_, columns_);
     ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->tableWidget->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     initNewFrame();
     initPreview();
+    timer->stop();
 }
 
 void SpriteView::exportGifWindow()
@@ -213,8 +213,10 @@ void SpriteView::exportGifWindow()
     }
 }
 
-// Initialize the items in the main draw box so that we can
-// change the color of them
+/*
+ * Initialize the items in the main draw box so that we can
+ * change the color of them
+ */
 void SpriteView::initMainDrawBoxItems(int row, int column)
 {
     ui->tableWidget->setRowCount(row);
@@ -235,8 +237,8 @@ void SpriteView::initNewFrame()
     ui->framesTable->setRowCount(frameCount+1);
     ui->framesTable->setColumnCount(1);
     ui->framesTable->setItem(frameCount+1, 1, newRow);
-    ui->framesTable->verticalHeader()->resizeSection(frameCount, 100);
-    ui->framesTable->horizontalHeader()->resizeSection(frameCount, 200);
+    ui->framesTable->verticalHeader()->resizeSection(frameCount, 135);
+    ui->framesTable->horizontalHeader()->resizeSection(frameCount, 220);
     ui->framesTable->horizontalHeader()->setVisible(false);
 
     QTableWidget *newFrame = new QTableWidget();
@@ -263,13 +265,16 @@ void SpriteView::initFrameItem(QTableWidget *newFrame)
 {
     int itemSizeD = rows_;
     if(rows_ < columns_){itemSizeD = columns_;}
+    int pixSize = ceil(125/itemSizeD);
+    if(pixSize<=1)
+        pixSize=1;
     //initialize items in table
     newFrame->verticalHeader()->setVisible(false);
     newFrame->horizontalHeader()->setVisible(false);
     newFrame->setRowCount(rows_);
     newFrame->setColumnCount(columns_);
-    newFrame->verticalHeader()->setDefaultSectionSize(100/itemSizeD);
-    newFrame->horizontalHeader()->setDefaultSectionSize(100/itemSizeD);
+    newFrame->verticalHeader()->setDefaultSectionSize(pixSize);
+    newFrame->horizontalHeader()->setDefaultSectionSize(pixSize);
     newFrame->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
     newFrame->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
 
@@ -293,7 +298,6 @@ void SpriteView::initFrameItem(QTableWidget *newFrame)
 
 /*
  * Initializes the animation preview table
- *
  */
 void SpriteView::initPreview()
 {
@@ -388,14 +392,14 @@ void SpriteView::previewAnim()
     QImage temp;
     if(rows_<columns_)
     {
-        ratioNum = 250/columns_;
+        ratioNum = ceil((double)250/columns_);
         temp = prevImages[currentPrev].scaled(250, rows_*ratioNum);
         ui->previewLabel->setPixmap(QPixmap::fromImage(temp));
 
     }
     else if(columns_<rows_)
     {
-        ratioNum = 250/rows_;
+        ratioNum = ceil((double)250/rows_);
         temp = prevImages[currentPrev].scaled(columns_*ratioNum,250);
         ui->previewLabel->setPixmap(QPixmap::fromImage(temp));
     }
@@ -411,6 +415,9 @@ void SpriteView::previewAnim()
         currentPrev = 0;
 }
 
+/*
+ * Updates images for preview animation when frame is changed
+ */
 void SpriteView::updatePrevImages(QVector<QImage> images)
 {
     prevImages = images;

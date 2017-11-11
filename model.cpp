@@ -126,7 +126,8 @@ Qt::ItemFlags Model::flags(const QModelIndex & /*index*/) const
 
 void Model::updatePreview()
 {
-    emit getImages(framesToImages(std::get<0>(frames[0].getSize()), std::get<1>(frames[0].getSize())));
+    if(frames.length()>0)
+        emit getImages(framesToImages(std::get<0>(frames[0].getSize()), std::get<1>(frames[0].getSize())));
 }
 
 void Model::updateSpeed(int pace)

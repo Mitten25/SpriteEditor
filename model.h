@@ -40,11 +40,8 @@ public slots:
 private:
     QVector<Frame> frames;
     int currFrame;
-    QTableWidget *currentTable;
-    int pixelCount;
+//    QTableWidget *currentTable;
     int speed;
-
-    int fps;
 
     QVector<QImage> framesToImages(int rows, int columns);
     void colorSection(int mult, QImage *image, int row, int column, QRgb value);
