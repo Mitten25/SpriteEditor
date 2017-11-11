@@ -19,7 +19,7 @@ void Model::saveFrame()
     //need else for layer number
 }
 
-void Model::LoadFrame()
+void Model::resetFrame()
 {
     frames.clear();
 }

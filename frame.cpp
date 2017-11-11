@@ -75,7 +75,7 @@ QString Frame::toString()
                     + QString::number(std::get<3>(temp)) + " ";
 
         }
-        result += QString("\n");
+        result += QString("\r\n");
     }
     return result;
 }

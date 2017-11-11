@@ -25,16 +25,16 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
 	// the model can control more
 
     connect(ui->addFrameButton, SIGNAL(clicked(bool)), this, SLOT(initNewFrame()));
-    connect(ui->tableWidget, SIGNAL(cellEntered(int,int)), this, SLOT(colorCell(int,int)));
 
     // File Menu
     connect(ui->actionSave_File, SIGNAL(triggered(bool)), &model, SLOT(saveFrame()));
     connect(&model, SIGNAL(getFrame(QVector<Frame>)), this, SLOT(saveFile(QVector<Frame>)));
 
-    connect(ui->actionOpen_File, SIGNAL(triggered(bool)), &model, SLOT(loadFrame()));
+    connect(ui->actionOpen_File, SIGNAL(triggered(bool)), &model, SLOT(resetFrame()));
     connect(ui->actionOpen_File, SIGNAL(triggered(bool)), this, SLOT(openFile()));
     connect(this, SIGNAL(loadColor(int,int)), &model, SLOT(setFramePixel(int,int)));
 
+    connect(ui->actionNew_File, SIGNAL(triggered(bool)), &model, SLOT(resetFrame()));
     connect(ui->actionNew_File, SIGNAL(triggered(bool)), this, SLOT(newFile()));
 
     connect(ui->actionExport_GIF, SIGNAL(triggered(bool)), this, SLOT(exportGifWindow()));
@@ -43,6 +43,7 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
     // Create Frame in Model
     connect(this, SIGNAL(createFrame(int,int)), &model, SLOT(newFrame(int,int)));
     connect(ui->framesTable, SIGNAL(cellEntered(int,int)), &model, SLOT(currentFrame(int,int)));
+    connect(ui->tableWidget, SIGNAL(cellEntered(int,int)), this, SLOT(colorCell(int,int)));
     connect(this, SIGNAL(pixelColor(std::tuple<int,int,int,int>)), &model, SLOT(setColor(std::tuple<int,int,int,int>)));
     connect(ui->tableWidget, SIGNAL(cellEntered(int,int)), &model, SLOT(setFramePixel(int,int)));
 
@@ -120,14 +121,7 @@ void SpriteView::openFile()
         columns_ = height_and_width[1].toInt();
 
         //initTableItems(height, width);
-        frameCount = 0;
-        initMainDrawBoxItems(rows_, columns_);
-        ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-        ui->tableWidget->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-        initNewFrame();
-        initPreview();
-        ui->addFrameButton->setEnabled(true);
-        ui->fpsSlider->setEnabled(true);
+        initStartFrame();
 
         QString frame = in.readLine();
 
@@ -177,14 +171,28 @@ void SpriteView::newFile()
     {
         rows_ = popup.getHeight();
         columns_ = popup.getWidth();
-        ui->addFrameButton->setEnabled(true);
-        ui->fpsSlider->setEnabled(true);
-        initMainDrawBoxItems(rows_, columns_);
-        ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-        ui->tableWidget->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-        initNewFrame();
-        initPreview();
+        initStartFrame();
     }
+}
+
+/*
+ * Helper method in order to load or make a new file
+ */
+void SpriteView::initStartFrame()
+{
+    // Reset UI
+    frameCount = 0;
+    ui->fpsSlider->setValue(0);
+    ui->framesTable->setRowCount(0);
+    ui->framesTable->setColumnCount(0);
+
+    ui->addFrameButton->setEnabled(true);
+    ui->fpsSlider->setEnabled(true);
+    initMainDrawBoxItems(rows_, columns_);
+    ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    ui->tableWidget->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    initNewFrame();
+    initPreview();
 }
 
 void SpriteView::exportGifWindow()

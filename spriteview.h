@@ -76,6 +76,7 @@ private:
     void initPreview();
     void setActiveColor(QColor color);
     void copyQTableWidgetContents(QTableWidget* from, QTableWidget* to);
+    void initStartFrame();
     QColor getActiveColor();
 };
 
