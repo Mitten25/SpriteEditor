@@ -58,9 +58,9 @@ QVector<QImage> Model::framesToImages(int rows, int columns)
             for(j = 0; j < rows; j++)
             {
                 std::tuple<int, int, int, int> values;
-                values = frames[i].pixels[k][j];
+                values = frames[i].pixels[j][k];
                 QRgb value = qRgb(std::get<0>(values), std::get<1>(values), std::get<2>(values));
-                colorSection(mult, &temp, j, k, value);
+                colorSection(mult, &temp, k, j, value);
             }
         }
         images.append(temp);
