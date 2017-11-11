@@ -100,6 +100,65 @@
     </size>
    </property>
    <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <layout class="QGridLayout" name="gridLayout_3">
+      <property name="verticalSpacing">
+       <number>5</number>
+      </property>
+      <item row="2" column="1" alignment="Qt::AlignLeft">
+       <widget class="QPushButton" name="bucketButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Bucket</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1" alignment="Qt::AlignLeft">
+       <widget class="QPushButton" name="dropButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Drop</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1" alignment="Qt::AlignLeft">
+       <widget class="QPushButton" name="colorButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1" alignment="Qt::AlignLeft">
+       <widget class="QPushButton" name="eraseButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Eraser</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
     <item row="0" column="1">
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
@@ -283,65 +342,6 @@
       </item>
      </layout>
     </item>
-    <item row="0" column="0">
-     <layout class="QGridLayout" name="gridLayout_3">
-      <property name="verticalSpacing">
-       <number>5</number>
-      </property>
-      <item row="2" column="1" alignment="Qt::AlignLeft">
-       <widget class="QPushButton" name="bucketButton">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text">
-         <string>Bucket</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1" alignment="Qt::AlignLeft">
-       <widget class="QPushButton" name="dropButton">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text">
-         <string>Drop</string>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="1" alignment="Qt::AlignLeft">
-       <widget class="QPushButton" name="colorButton">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="1" alignment="Qt::AlignLeft">
-       <widget class="QPushButton" name="eraseButton">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text">
-         <string>Eraser</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
     <item row="0" column="2">
      <widget class="QSplitter" name="splitter">
       <property name="orientation">
@@ -354,23 +354,6 @@
        </property>
        <property name="text">
         <string>Add Frame</string>
-       </property>
-      </widget>
-      <widget class="QTableWidget" name="previewTable">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="focusPolicy">
-        <enum>Qt::NoFocus</enum>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">background-color: rgba(0,0,0,0)</string>
-       </property>
-       <property name="editTriggers">
-        <set>QAbstractItemView::NoEditTriggers</set>
-       </property>
-       <property name="selectionMode">
-        <enum>QAbstractItemView::NoSelection</enum>
        </property>
       </widget>
       <widget class="QLabel" name="fpsLabel">
@@ -398,6 +381,17 @@
         <number>4</number>
        </property>
       </widget>
+      <widget class="QLabel" name="previewLabel">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
      </widget>
     </item>
    </layout>
@@ -408,7 +402,7 @@
      <x>0</x>
      <y>0</y>
      <width>913</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuSprite_Editor">

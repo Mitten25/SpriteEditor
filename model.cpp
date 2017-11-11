@@ -47,15 +47,15 @@ QVector<QImage> Model::framesToImages(int rows, int columns)
     int i, j, k;
     for(i = 0; i < frames.length(); i++)
     {
-        QImage temp(QSize(rows, columns), QImage::Format_ARGB32);
-        for(j = 0; j < rows; j++)
+        QImage temp(QSize(columns, rows), QImage::Format_ARGB32);
+        for(k = 0; k < columns; k++)
         {
-            for(k = 0; k < columns; k++)
+            for(j = 0; j < rows; j++)
             {
                 std::tuple<int, int, int, int> values;
-                values = frames[i].pixels[k][j];
+                values = frames[i].pixels[j][k];
                 QRgb value = qRgb(std::get<0>(values), std::get<1>(values), std::get<2>(values));
-                temp.setPixel(j, k, value);
+                temp.setPixel(k, j, value);
             }
         }
         images.append(temp);
@@ -106,7 +106,7 @@ Qt::ItemFlags Model::flags(const QModelIndex & /*index*/) const
     return Qt::ItemIsSelectable |  Qt::ItemIsEditable | Qt::ItemIsEnabled ;
 }
 
-void Model::updateFPS(int f)
+void Model::updatePreview()
 {
-    fps = f;
+    emit getImages(framesToImages(std::get<0>(frames[0].getSize()), std::get<1>(frames[0].getSize())));
 }

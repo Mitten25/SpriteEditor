@@ -24,6 +24,7 @@ public:
     QString toString();
 
     std::tuple <int, int, int, int> color;
+    std::tuple<int,int> getSize();
 };
 
 #endif // FRAME_H

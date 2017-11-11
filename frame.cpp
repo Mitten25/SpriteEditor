@@ -79,3 +79,9 @@ QString Frame::toString()
     }
     return result;
 }
+
+std::tuple<int,int> Frame::getSize()
+{
+    std::tuple<int,int> temp(row, column);
+    return temp;
+}

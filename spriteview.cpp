@@ -47,10 +47,13 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
     connect(this, SIGNAL(pixelColor(std::tuple<int,int,int,int>)), &model, SLOT(setColor(std::tuple<int,int,int,int>)));
     connect(ui->tableWidget, SIGNAL(cellEntered(int,int)), &model, SLOT(setFramePixel(int,int)));
 
-    // Preview Animation
+    // Preview Animation/*
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(previewAnim()));
-    connect(ui->fpsSlider, SIGNAL(valueChanged(int)), &model, SLOT(updateFPS(int)));
+    connect(ui->tableWidget, SIGNAL(cellEntered(int,int)), &model, SLOT(updatePreview()));
+    connect(this, SIGNAL(createFrame(int,int)), &model, SLOT(updatePreview()));
+    //connect(ui->fpsSlider, SIGNAL(valueChanged(int)), &model, SLOT(updatePreview()));
+    connect(&model, SIGNAL(getImages(QVector<QImage>)), this, SLOT(updatePrevImages(QVector<QImage>)));
     connect(ui->fpsSlider, SIGNAL(valueChanged(int)), this, SLOT(changeFPS(int)));
 }
 
@@ -154,6 +157,7 @@ void SpriteView::openFile()
                 // Add Frame here
                 initNewFrame();
             }
+            ui->previewLabel->clear();
             current_frame++;
         }
         // Reset activeColor
@@ -292,25 +296,8 @@ void SpriteView::initFrameItem(QTableWidget *newFrame)
  */
 void SpriteView::initPreview()
 {
-    int itemSizeD = rows_;
-    if(rows_ < columns_){itemSizeD = columns_;}
-    //initialize items in table
-    ui->previewTable->verticalHeader()->setVisible(false);
-    ui->previewTable->horizontalHeader()->setVisible(false);
-    ui->previewTable->setRowCount(rows_);
-    ui->previewTable->setColumnCount(columns_);
-    ui->previewTable->verticalHeader()->setDefaultSectionSize(210/itemSizeD);
-    ui->previewTable->horizontalHeader()->setDefaultSectionSize(210/itemSizeD);
-    ui->previewTable->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
-    ui->previewTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
-
-    for (int r = 0; r < rows_; r++) {
-        for (int c = 0; c < columns_; c++) {
-            QTableWidgetItem *newItem = new QTableWidgetItem();
-            newItem->setBackground(QColor(0,0,0,0));
-            ui->previewTable->setItem(r, c, newItem);
-        }
-    }
+    ui->previewLabel->setFixedWidth(250);
+    ui->previewLabel->setFixedHeight(250);
 }
 /*
  * Copy all of the colors in one QTableWidget to another
@@ -396,18 +383,37 @@ void SpriteView::onFrameSelected(QTableWidgetItem *item)
  */
 void SpriteView::previewAnim()
 {
-    for (int r = 0; r < rows_; r++) {
-        for (int c = 0; c < columns_; c++) {
-            QTableWidget *temp = (QTableWidget*)ui->framesTable->cellWidget(currentPrev,0);
-            copyQTableWidgetContents(temp, ui->previewTable);
-        }
+    int ratioNum;
+    QImage temp;
+    if(rows_<columns_)
+    {
+        ratioNum = 250/columns_;
+        temp = prevImages[currentPrev].scaled(250, rows_*ratioNum);
+        ui->previewLabel->setPixmap(QPixmap::fromImage(temp));
+
     }
+    else if(columns_<rows_)
+    {
+        ratioNum = 250/rows_;
+        temp = prevImages[currentPrev].scaled(columns_*ratioNum,250);
+        ui->previewLabel->setPixmap(QPixmap::fromImage(temp));
+    }
+    else
+    {
+        temp = prevImages[currentPrev].scaled(250,250);
+        ui->previewLabel->setPixmap(QPixmap::fromImage(temp));
+    }
+    ui->previewLabel->show();
     if(currentPrev < frameCount-1)
         currentPrev++;
     else
         currentPrev = 0;
 }
 
+void SpriteView::updatePrevImages(QVector<QImage> images)
+{
+    prevImages = images;
+}
 /*
  * Updates the fps when fps slider is changed
  */

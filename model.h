@@ -23,15 +23,15 @@ public:
 
 signals:
 	void editCompleted(const QString &);
-     void getFrame(QVector<Frame> frame);
-
+    void getFrame(QVector<Frame> frame);
+    void getImages(QVector<QImage> images);
 public slots:
 //    void getTable(QTableWidget);
     void newFrame(int height, int width);
     void setFramePixel(int x, int y);
     void setColor(std::tuple<int, int, int, int> c);
     void saveFrame();
-    void updateFPS(int f);
+    void updatePreview();
     void exportGif(QString file_name, int rows, int columns);
     void currentFrame(int,int);
     void resetFrame();

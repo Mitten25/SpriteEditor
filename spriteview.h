@@ -52,6 +52,7 @@ private slots:
     void exportGifWindow();
     void onFrameSelected(QTableWidgetItem *item);
     void previewAnim();
+    void updatePrevImages(QVector<QImage> images);
     void changeFPS(int);
 
 private:
@@ -70,7 +71,7 @@ private:
     QTimer *timer;
     int previewSecs;
     int currentPrev;
-
+    QVector<QImage> prevImages;
     void initMainDrawBoxItems(int, int);
     void initFrameItem(QTableWidget *newFrame);
     void initPreview();
