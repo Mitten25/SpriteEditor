@@ -110,20 +110,20 @@
       <item row="1" column="1" alignment="Qt::AlignLeft">
        <widget class="QPushButton" name="dropButton">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+         <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
         <property name="text">
-         <string>Drop</string>
+         <string>Draw</string>
         </property>
        </widget>
       </item>
       <item row="4" column="1" alignment="Qt::AlignLeft">
        <widget class="QPushButton" name="eraseButton">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+         <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -133,13 +133,19 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="1" alignment="Qt::AlignLeft">
+      <item row="2" column="1" alignment="Qt::AlignHCenter">
        <widget class="QPushButton" name="bucketButton">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+         <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
         </property>
         <property name="text">
          <string>Bucket</string>
@@ -149,7 +155,7 @@
       <item row="6" column="1" alignment="Qt::AlignLeft">
        <widget class="QPushButton" name="colorButton">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+         <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -163,6 +169,12 @@
        <widget class="QPushButton" name="onionButton">
         <property name="enabled">
          <bool>false</bool>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
         <property name="text">
          <string>Onion Skin</string>

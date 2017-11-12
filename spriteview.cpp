@@ -14,6 +14,9 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
 	// Initialize color picker button
     QColor startColor("black");
     ui->colorButton->setStyleSheet(COLOR_STYLE.arg(startColor.name()));
+    /*QPixmap pixmap("buttontest.png");
+    QIcon ButtonIcon(pixmap);
+    ui->bucketButton->setIcon(ButtonIcon);*/
     activeColor = startColor;
 
     rows_ = 8;
