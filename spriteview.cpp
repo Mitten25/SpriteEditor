@@ -53,6 +53,10 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
     connect(ui->fpsSlider, SIGNAL(valueChanged(int)), &model, SLOT(updatePreview()));
     connect(&model, SIGNAL(getImages(QVector<QImage>)), this, SLOT(updatePrevImages(QVector<QImage>)));
     connect(ui->fpsSlider, SIGNAL(valueChanged(int)), this, SLOT(changeFPS(int)));
+
+    //Onion Skinning
+    connect(ui->onionButton, SIGNAL(clicked(bool)), this, SLOT(showOnionSkins()));
+
 }
 
 void SpriteView::saveFile(QVector<Frame> f)
@@ -122,6 +126,7 @@ void SpriteView::openFile()
         columns_ = height_and_width[1].toInt();
 
         //initTableItems(height, width);
+        cleanUp();
         initStartFrame();
 
         QString frame = in.readLine();
@@ -173,6 +178,7 @@ void SpriteView::newFile()
     {
         rows_ = popup.getHeight();
         columns_ = popup.getWidth();
+        cleanUp();
         initStartFrame();
         ui->previewLabel->clear();
     }
@@ -187,16 +193,17 @@ void SpriteView::initStartFrame()
     frameCount = 0;
     ui->framesTable->setRowCount(0);
     ui->framesTable->setColumnCount(0);
-
     ui->addFrameButton->setEnabled(true);
     ui->fpsSlider->setEnabled(true);
     ui->fpsSlider->setValue(0);
     prevImages.clear();
+    ui->onionButton->setEnabled(true);
     initMainDrawBoxItems(rows_, columns_);
     ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->tableWidget->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     initNewFrame();
     initPreview();
+    initOnionTables();
     timer->stop();
 }
 
@@ -441,7 +448,125 @@ void SpriteView::changeFPS(int fps)
     emit updateSpeed(speed);
 }
 
+/*
+ * Shows/hides onion skin when onion skin button is clicked
+ */
+void SpriteView::showOnionSkins()
+{
+    int currentFrameI = getCurrentFrameIndex();
+    if(onionTables[0]->isVisible())
+        for(int i = 0; i < 3; i++)
+            onionTables[i]->hide();
+    else
+    {
+        if(currentFrameI != 0)
+        {
+            int j = 0;
+            int i = currentFrameI-1;
+            while( i >= 0 && i != currentFrameI-4)//for(int i= currentFrameI-1; 0 <= i; i--)
+            {
+                QTableWidget *temp = (QTableWidget*)ui->framesTable->cellWidget(i, 0);
+                for (int r = 0; r < rows_; r++) {
+                    for (int c = 0; c < columns_; c++) {
+                        QColor fromColor =temp->item(r,c)->background().color();
+                        if(fromColor.alpha()!=0)
+                            fromColor.setAlpha(50);
+                        onionTables[j]->item(r, c)->setBackground(fromColor);
+                    }
+                }
+                onionTables[j]->show();
+                j++;
+                i--;
+            }
+        }
+    }
+
+}
+/*
+ * Initialize onion tables
+ */
+void SpriteView::initOnionTables()
+{
+    stackedLayout = new QStackedLayout;
+    ui->horizontalLayout->addLayout(stackedLayout,0);
+    stackedLayout->addWidget(ui->tableWidget);
+    stackedLayout->setStackingMode(QStackedLayout::StackAll);
+    for(int i = 0; i < 3; i++)
+    {
+        onionTables[i] = new QTableWidget();
+        onionTables[i]->setRowCount(rows_);
+        onionTables[i]->setColumnCount(columns_);
+        onionTables[i]->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+        onionTables[i]->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+        onionTables[i]->verticalHeader()->setVisible(false);
+        onionTables[i]->horizontalHeader()->setVisible(false);
+        onionTables[i]->setObjectName("onionTable"+QString::number(i));
+        onionTables[i]->setStyleSheet("background-color:rgba(0,0,0,0)");
+        onionTables[i]->hide();
+        stackedLayout->addWidget(onionTables[i]);
+        for (int r = 0; r < rows_; r++) {
+            for (int c = 0; c < columns_; c++) {
+                QTableWidgetItem *newItem = new QTableWidgetItem();
+                onionTables[i]->setItem(r, c, newItem);
+            }
+        }
+    }
+}
+
+int SpriteView::getCurrentFrameIndex()
+{
+    int currentFrameIndex = 0;
+    for(int i = 0; i < frameCount; i++)
+    {
+        if(currentTableWidget == ui->framesTable->cellWidget(i,0))
+            currentFrameIndex = i;
+    }
+    return currentFrameIndex;
+}
+
+/*
+ * Clean up when new file is made, file is opened, or closing app
+ */
+void SpriteView::cleanUp()
+{
+    //Main Table
+    for (int r = 0; r < rows_; r++) {
+        for (int c = 0; c < columns_; c++) {
+            delete ui->tableWidget->item(r,c);
+        }
+    }
+
+    //Frames
+    for(int i = 0; i < frameCount; i++)
+    {
+        for (int r = 0; r < rows_; r++) {
+            for (int c = 0; c < columns_; c++) {
+                delete ((QTableWidget*)ui->framesTable->cellWidget(i,0))->item(r,c);
+            }
+        }
+        delete ui->framesTable->item(i, 0);
+    }
+
+    //Onion Skinning
+    if(onionTables[0] != NULL)
+    {
+        for(int i = 0; i < 3; i++)
+        {
+            onionTables[i]->hide();
+            for (int r = 0; r < rows_; r++)
+            {
+                for (int c = 0; c < columns_; c++) {
+                    delete onionTables[i]->item(r,c);
+                }
+            }
+            delete onionTables[i];
+        }
+    }
+    delete stackedLayout;
+}
 SpriteView::~SpriteView()
 {
+    cleanUp();
+    delete timer;
     delete ui;
 }

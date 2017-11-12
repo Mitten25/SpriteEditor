@@ -13,6 +13,7 @@
 #include <QMessageBox>
 #include <QDebug>
 #include <QTimer>
+#include <QStackedLayout>
 #include <tuple>
 #include <iostream>
 #include "model.h"
@@ -55,6 +56,7 @@ private slots:
     void previewAnim();
     void updatePrevImages(QVector<QImage> images);
     void changeFPS(int);
+    void showOnionSkins();
 
 private:
     Ui::SpriteView *ui;
@@ -71,13 +73,18 @@ private:
     QTimer *timer;
     int currentPrev;
     QVector<QImage> prevImages;
+    QStackedLayout *stackedLayout;
+    QTableWidget *onionTables[3];
     void initMainDrawBoxItems(int, int);
     void initFrameItem(QTableWidget *newFrame);
     void initPreview();
+    void initOnionTables();
     void setActiveColor(QColor color);
     void copyQTableWidgetContents(QTableWidget* from, QTableWidget* to);
     void initStartFrame();
     QColor getActiveColor();
+    int getCurrentFrameIndex();
+    void cleanUp();
 };
 
 #endif // SPRITEVIEW_H
