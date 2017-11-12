@@ -552,6 +552,7 @@ void SpriteView::cleanUp()
         delete ui->framesTable->item(i, 0);
     }
 
+    /*
     //Onion Skinning
     if(onionTables[0] != NULL)
     {
@@ -568,6 +569,7 @@ void SpriteView::cleanUp()
         }
     }
     delete stackedLayout;
+    */
 }
 SpriteView::~SpriteView()
 {

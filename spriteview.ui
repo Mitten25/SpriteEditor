@@ -90,7 +90,9 @@
    <string>SpriteView</string>
   </property>
   <property name="styleSheet">
-   <string notr="true"/>
+   <string notr="true">font: 8pt &quot;MS Shell Dlg 2&quot;;
+
+</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <property name="maximumSize">
@@ -412,7 +414,7 @@
      <x>0</x>
      <y>0</y>
      <width>913</width>
-     <height>26</height>
+     <height>16</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuSprite_Editor">

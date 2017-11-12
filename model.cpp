@@ -96,6 +96,7 @@ void Model::setColor(std::tuple<int, int, int, int> c)
     frames[currFrame].setColor(c);
 }
 
+/*
 QVariant Model::data(const QModelIndex &index, int role) const
 {
     if (role == Qt::DisplayRole)
@@ -106,7 +107,6 @@ QVariant Model::data(const QModelIndex &index, int role) const
     }
     return QVariant();
 }
-
 
 bool Model::setData(const QModelIndex & index, const QVariant & value, int role)
 {
@@ -119,10 +119,12 @@ bool Model::setData(const QModelIndex & index, const QVariant & value, int role)
 }
 
 
-Qt::ItemFlags Model::flags(const QModelIndex & /*index*/) const
+Qt::ItemFlags Model::flags(const QModelIndex & /*index*///) const
+/*
 {
     return Qt::ItemIsSelectable |  Qt::ItemIsEditable | Qt::ItemIsEnabled ;
 }
+*/
 
 void Model::updatePreview()
 {
