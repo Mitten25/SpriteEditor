@@ -1,5 +1,6 @@
 #include "spriteview.h"
 #include "ui_spriteview.h"
+#include <QShortcut>
 
 SpriteView::SpriteView(Model& model, QWidget *parent) :
     QMainWindow(parent),
@@ -19,6 +20,10 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
     columns_ = 8;
     frameCount = 0;
     currentPrev= 0;
+
+    // Short Cuts
+    QShortcut *eraser = new QShortcut(QKeySequence("Ctrl+E"), this);
+    connect(eraser, SIGNAL(activated()), this, SLOT(on_eraseButton_clicked()));
 
     // Add Frame
     connect(ui->addFrameButton, SIGNAL(clicked(bool)), this, SLOT(initNewFrame()));
