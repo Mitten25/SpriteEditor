@@ -40,6 +40,11 @@ void Frame::setColor(std::tuple <int, int, int, int> c)
     color = c;
 }
 
+std::tuple <int, int, int, int> Frame::getColor()
+{
+    return color;
+}
+
 Frame Frame::fromTableWidget(QTableWidget* tableWidget)
 {
     int rows = tableWidget->rowCount();

@@ -10,8 +10,7 @@ class Frame
 {
 
 private:
-    int row;
-    int column;
+
 
 public:
     QVector <QVector<std::tuple<int, int, int, int>>> pixels;
@@ -20,11 +19,13 @@ public:
     std::tuple<int, int, int, int> getPixel(int x, int y);
     void setPixel(int x, int y);
     void setColor(std::tuple <int, int, int, int> c);
+    std::tuple <int, int, int, int> getColor();
 	static Frame fromTableWidget(QTableWidget* tableWidget);
     QString toString();
-
     std::tuple <int, int, int, int> color;
     std::tuple<int,int> getSize();
+    int row;
+    int column;
 };
 
 #endif // FRAME_H

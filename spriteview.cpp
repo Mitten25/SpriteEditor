@@ -14,15 +14,13 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
 	// Initialize color picker button
     QColor startColor("black");
     ui->colorButton->setStyleSheet(COLOR_STYLE.arg(startColor.name()));
-    /*QPixmap pixmap("buttontest.png");
-    QIcon ButtonIcon(pixmap);
-    ui->bucketButton->setIcon(ButtonIcon);*/
     activeColor = startColor;
 
     rows_ = 8;
     columns_ = 8;
     frameCount = 0;
     currentPrev= 0;
+    *onionTables = {NULL};
 
     // Short Cuts
     QShortcut *eraser = new QShortcut(QKeySequence("Ctrl+E"), this);
@@ -134,7 +132,8 @@ void SpriteView::openFile()
         columns_ = height_and_width[1].toInt();
 
         //initTableItems(height, width);
-        cleanUp();
+        if(onionTables[0] != NULL)
+            cleanUp();
         initStartFrame();
 
         QString frame = in.readLine();
@@ -186,7 +185,8 @@ void SpriteView::newFile()
     {
         rows_ = popup.getHeight();
         columns_ = popup.getWidth();
-        cleanUp();
+        if(onionTables[0] != NULL)
+            cleanUp();
         initStartFrame();
         ui->previewLabel->clear();
     }
@@ -555,7 +555,6 @@ void SpriteView::cleanUp()
         delete ui->framesTable->item(i, 0);
     }
 
-    /*
     //Onion Skinning
     if(onionTables[0] != NULL)
     {
@@ -572,7 +571,6 @@ void SpriteView::cleanUp()
         }
     }
     delete stackedLayout;
-    */
 }
 SpriteView::~SpriteView()
 {

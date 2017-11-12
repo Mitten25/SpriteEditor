@@ -6,6 +6,7 @@
 #include <cstdlib>
 #include <QVector>
 #include <tuple>
+#include <QtConcurrent/QtConcurrent>
 #include <QFile>
 #include <iostream>
 #include "frame.h"
@@ -26,7 +27,6 @@ signals:
     void getFrame(QVector<Frame> frame);
     void getImages(QVector<QImage> images);
 public slots:
-//    void getTable(QTableWidget);
     void newFrame(int height, int width);
     void setFramePixel(int x, int y);
     void setColor(std::tuple<int, int, int, int> c);
@@ -36,22 +36,16 @@ public slots:
     void currentFrame(int,int);
     void resetFrame();
     void updateSpeed(int);
-    //void bucketCommand(int, int);
-    //void currentTool(bool);
+    void bucketCommand(int, int);
+    void currentTool(bool);
 
 private:
     QVector<Frame> frames;
     int currFrame;
-//    QTableWidget *currentTable;
     int speed;
 
     QVector<QImage> framesToImages(int rows, int columns);
     void colorSection(int mult, QImage *image, int row, int column, QRgb value);
-
-    //QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
-    //bool setData(const QModelIndex & index, const QVariant & value, int role = Qt::EditRole);
-    //Qt::ItemFlags flags(const QModelIndex & index) const;
-    //QString m_gridData[SPRITE_SIZE][SPRITE_SIZE];
 
     void paintBucket(int, int);
 

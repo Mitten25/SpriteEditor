@@ -1,5 +1,7 @@
 #include "model.h"
 
+using namespace std;
+
 Model::Model(QObject *parent) : QObject (parent)
 {
 
@@ -57,7 +59,7 @@ QVector<QImage> Model::framesToImages(int rows, int columns)
         {
             for(j = 0; j < rows; j++)
             {
-                std::tuple<int, int, int, int> values;
+                tuple<int, int, int, int> values;
                 values = frames[i].pixels[j][k];
                 QRgb value = qRgb(std::get<0>(values), std::get<1>(values), std::get<2>(values));
                 colorSection(mult, &temp, k, j, value);
@@ -81,50 +83,21 @@ void Model::colorSection(int mult, QImage *image, int row, int column, QRgb valu
     }
 }
 
-//void Model::getTable(QTableWidget table)
-//{
-//    currentTable = &table;
-//}
+void Model::bucketCommand(int y, int x) {
+
+
+}
 
 void Model::setFramePixel(int x, int y)
 {
     frames[currFrame].setPixel(x, y);
 }
 
-void Model::setColor(std::tuple<int, int, int, int> c)
+void Model::setColor(tuple<int, int, int, int> c)
 {
     frames[currFrame].setColor(c);
 }
 
-/*
-QVariant Model::data(const QModelIndex &index, int role) const
-{
-    if (role == Qt::DisplayRole)
-    {
-       return QString("%1, %2")
-                   .arg(index.row() + 1)
-                   .arg(index.column() +1);
-    }
-    return QVariant();
-}
-
-bool Model::setData(const QModelIndex & index, const QVariant & value, int role)
-{
-    if (role == Qt::EditRole)
-    {
-        QString result = value.toString();
-        emit editCompleted( result );
-    }
-    return true;
-}
-
-
-Qt::ItemFlags Model::flags(const QModelIndex & /*index*///) const
-/*
-{
-    return Qt::ItemIsSelectable |  Qt::ItemIsEditable | Qt::ItemIsEnabled ;
-}
-*/
 
 void Model::updatePreview()
 {
@@ -136,3 +109,34 @@ void Model::updateSpeed(int pace)
 {
     speed = pace;
 }
+
+void Model::paintBucket(int x, int y) {
+    tuple<int, int, int, int> currentPixel = frames[currFrame].getPixel(x, y);
+    tuple<int, int, int, int> currentColor = frames[currFrame].getColor();
+
+    if(currentPixel == currentColor)
+        return;
+
+    setFramePixel(x, y);
+
+    int x1 = x - 1;
+    int x2 = x + 1;
+    int y1 = y - 1;
+    int y2 = y + 1;
+
+    if (frames[currFrame].getPixel(x1, y) == currentPixel) {
+
+    }
+
+
+    }
+
+void Model::currentTool(bool isBucketOn) {
+
+}
+
+
+
+
+
+
