@@ -35,7 +35,7 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
 
     connect(ui->actionOpen_File, SIGNAL(triggered(bool)), &model, SLOT(resetFrame()));
     connect(ui->actionOpen_File, SIGNAL(triggered(bool)), this, SLOT(openFile()));
-    connect(this, SIGNAL(loadColor(int,int)), &model, SLOT(setFramePixel(int,int)));
+    connect(this, SIGNAL(loadColor(int,int)), &model, SLOT(paintCommand(int,int)));
 
     connect(ui->actionNew_File, SIGNAL(triggered(bool)), &model, SLOT(resetFrame()));
     connect(ui->actionNew_File, SIGNAL(triggered(bool)), this, SLOT(newFile()));
@@ -44,12 +44,17 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
     connect(this, SIGNAL(exportGifSig(QString, int, int)), &model, SLOT(exportGif(QString, int, int)));
     connect(this, SIGNAL(updateSpeed(int)), &model, SLOT(updateSpeed(int)));
 
+    // Button
+    connect(ui->drawButton, SIGNAL(clicked(bool)), &model, SLOT(drawToolOn(bool)));
+    connect(ui->eraseButton, SIGNAL(clicked(bool)), &model, SLOT(drawToolOn(bool)));
+    connect(ui->bucketButton, SIGNAL(clicked(bool)), &model, SLOT(bucketToolOn(bool)));
+
     // Create Frame in Model
     connect(this, SIGNAL(createFrame(int,int)), &model, SLOT(newFrame(int,int)));
     connect(ui->framesTable, SIGNAL(cellEntered(int,int)), &model, SLOT(currentFrame(int,int)));
-    connect(ui->tableWidget, SIGNAL(cellEntered(int,int)), this, SLOT(colorCell(int,int)));
     connect(this, SIGNAL(pixelColor(std::tuple<int,int,int,int>)), &model, SLOT(setColor(std::tuple<int,int,int,int>)));
-    connect(ui->tableWidget, SIGNAL(cellEntered(int,int)), &model, SLOT(setFramePixel(int,int)));
+    connect(ui->tableWidget, SIGNAL(cellEntered(int,int)), &model, SLOT(paintCommand(int,int)));
+    connect(&model, SIGNAL(colorThisPixel(int,int)), this, SLOT(colorCell(int,int)));
 
     // Preview Animation
     timer = new QTimer(this);
@@ -369,12 +374,12 @@ void SpriteView::on_colorButton_clicked()
  */
 void SpriteView::colorCell(int row, int column)
 {
+    std::tuple<int, int, int, int> color (activeColor.red(), activeColor.green(), activeColor.blue(), activeColor.alpha());
+    emit pixelColor(color);
 	// change the color of the currently displayed drawing
     ui->tableWidget->item(row, column)->setBackground(activeColor);
 	// also change the color of the current selected frame
     currentTableWidget->item(row,column)->setBackground(activeColor);
-    std::tuple<int, int, int, int> color (activeColor.red(), activeColor.green(), activeColor.blue(), activeColor.alpha());
-    emit pixelColor(color);
 }
 
 void SpriteView::on_eraseButton_clicked()

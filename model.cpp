@@ -24,6 +24,8 @@ void Model::saveFrame()
 void Model::resetFrame()
 {
     frames.clear();
+    draw = true;
+    bucket = false;
 }
 
 void Model::exportGif(QString file_name, int rows, int columns)
@@ -83,14 +85,21 @@ void Model::colorSection(int mult, QImage *image, int row, int column, QRgb valu
     }
 }
 
-void Model::bucketCommand(int y, int x) {
-
-
+void Model::paintCommand(int x, int y) {
+    if (bucket == true)
+    {
+        paintBucket(x, y);
+    }
+    else
+    {
+        setFramePixel(x, y);
+    }
 }
 
 void Model::setFramePixel(int x, int y)
 {
     frames[currFrame].setPixel(x, y);
+    emit colorThisPixel(x, y);
 }
 
 void Model::setColor(tuple<int, int, int, int> c)
@@ -119,24 +128,37 @@ void Model::paintBucket(int x, int y) {
 
     setFramePixel(x, y);
 
+    int width = frames[currFrame].column;
+    int height = frames[currFrame].row;
+
     int x1 = x - 1;
     int x2 = x + 1;
     int y1 = y - 1;
     int y2 = y + 1;
 
-    if (frames[currFrame].getPixel(x1, y) == currentPixel) {
-
+    if (x1 >= 0 && frames[currFrame].getPixel(x1, y) == currentPixel) {
+        QtConcurrent::run(this, &Model::paintBucket, x1, y);
     }
-
-
+    if (x2 < width && frames[currFrame].getPixel(x2, y) == currentPixel) {
+        QtConcurrent::run(this, &Model::paintBucket, x2, y);
     }
-
-void Model::currentTool(bool isBucketOn) {
+    if (y1 >= 0 && frames[currFrame].getPixel(x, y1) == currentPixel) {
+        QtConcurrent::run(this, &Model::paintBucket, x, y1);
+    }
+    if (y2 < height && frames[currFrame].getPixel(x, y2) == currentPixel) {
+        QtConcurrent::run(this, &Model::paintBucket, x, y2);
+    }
 
 }
 
+void Model::bucketToolOn(bool on) {
+    bucket = true;
+    draw = false;
+}
 
-
-
+void Model::drawToolOn(bool on) {
+    draw = true;
+    bucket = false;
+}
 
 

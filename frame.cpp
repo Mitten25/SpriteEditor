@@ -6,6 +6,7 @@ Frame::Frame(int height, int width)
 {
     row = height;
     column = width;
+    color = std::tuple<int,int,int,int> (0,0,0,255);
 
     //Will set everything to white
     for (int y = 0; y < row; y++)
