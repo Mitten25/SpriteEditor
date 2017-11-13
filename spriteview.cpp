@@ -75,6 +75,9 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
     connect(ui->eraseButton, SIGNAL(clicked(bool)), &model, SLOT(eraserToolOn()));
     connect(&model, SIGNAL(eraserTurnOn(bool)), this, SLOT(eraserOn(bool)));
     connect(ui->bucketButton, SIGNAL(clicked(bool)), &model, SLOT(bucketToolOn()));
+    connect(ui->duplicateButton, SIGNAL(clicked(bool)), this, SLOT(initNewFrame()));
+    connect(ui->duplicateButton, SIGNAL(clicked(bool)), &model, SLOT(duplicate()));
+    connect(&model, SIGNAL(dupThis(Frame)), this, SLOT(duplicateFrame(Frame)));
 
     // Create Frame in Model
     connect(this, SIGNAL(createFrame(int,int)), &model, SLOT(newFrame(int,int)));
@@ -224,7 +227,29 @@ void SpriteView::newFile()
             cleanUp();
         initStartFrame();
         ui->previewLabel->clear();
+        // Makes sure the color is saved for each new file
+        std::tuple<int,int,int,int> currentColor(activeColor.red(), activeColor.green(), activeColor.blue(), activeColor.alpha());
+        emit pixelColor(currentColor);
     }
+}
+
+/*
+ * When the user calls this it will copy their current selected frame to a new one.
+ */
+void SpriteView::duplicateFrame(Frame f)
+{
+    QColor prevColor = activeColor;
+    for(int y = 0; y < f.row; y++)
+    {
+        for(int x = 0; x < f.column; x++)
+        {
+            std::tuple<int, int, int, int> color = f.getPixel(x, y);
+            QColor frameColor(std::get<0>(color), std::get<1>(color), std::get<2>(color), std::get<3>(color));
+            setActiveColor(frameColor);
+            colorCell(x, y);
+        }
+    }
+    setActiveColor(prevColor);
 }
 
 /*
@@ -237,6 +262,7 @@ void SpriteView::initStartFrame()
     ui->framesTable->setRowCount(0);
     ui->framesTable->setColumnCount(0);
     ui->addFrameButton->setEnabled(true);
+    ui->duplicateButton->setEnabled(true);
     ui->fpsSlider->setEnabled(true);
     ui->fpsSlider->setValue(0);
     prevImages.clear();

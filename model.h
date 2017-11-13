@@ -28,6 +28,7 @@ signals:
     void getImages(QVector<QImage> images);
     void colorThisPixel(int,int);
     void eraserTurnOn(bool);
+    void dupThis(Frame);
 
 public slots:
     void newFrame(int height, int width);
@@ -38,6 +39,7 @@ public slots:
     void currentFrame(int);
     void resetFrame();
     void updateSpeed(int);
+    void duplicate();
     void paintCommand(int, int);
     void bucketToolOn();
     void drawToolOn();

@@ -54,6 +54,12 @@ void Model::currentFrame(int x)
     currFrame = x;
 }
 
+void Model::duplicate()
+{
+    frames[currFrame] = frames[currFrame - 1];
+    emit dupThis(frames[currFrame-1]);
+}
+
 QVector<QImage> Model::framesToImages(int rows, int columns)
 {
     QVector<QImage> images;

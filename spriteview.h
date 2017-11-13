@@ -59,6 +59,7 @@ private slots:
     void changeFPS(int);
     void showOnionSkins();
     void on_drawButton_clicked();
+    void duplicateFrame(Frame f);
 
 private:
     Ui::SpriteView *ui;
