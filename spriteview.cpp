@@ -21,7 +21,10 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
     frameCount = 0;
     currentPrev= 0;
     *onionTables = {NULL};
-
+    for(int i = 0; i < 3; i++)
+    {
+        onionTables[i] = NULL;
+    }
     // Short Cuts
     QShortcut *save = new QShortcut(QKeySequence("Ctrl+S"), this);
     connect(save, SIGNAL(activated()), &model, SLOT(saveFrame()));
@@ -541,10 +544,14 @@ void SpriteView::showOnionSkins()
 
 void SpriteView::hideOnionSkins()
 {
-    if(onionTables[0] != NULL)
-        if(onionTables[0]->isVisible())
-            for(int i = 0; i < 3; i++)
+    for(int i = 0; i < 3; i++)
+    {
+        if(onionTables[i] != NULL)
+        {
+            if(onionTables[i]->isVisible())
                 onionTables[i]->hide();
+        }
+    }
 }
 /*
  * Initialize onion tables
@@ -645,9 +652,11 @@ void SpriteView::cleanUp()
                 }
             }
             delete onionTables[i];
+            onionTables[i]=NULL;
         }
     }
-    delete stackedLayout;
+    if(stackedLayout!=NULL)
+        delete stackedLayout;
 }
 SpriteView::~SpriteView()
 {
