@@ -189,7 +189,7 @@ void SpriteView::openFile()
                 // To set each pixel with the correct color
                 for (int i = 0; i <= colors.size() - 4; i += 4)
                 {
-                    activeColor = QColor(colors[i].toInt(),colors[i+1].toInt(),colors[i+2].toInt(),colors[i+3].toInt());
+                    setActiveColor(QColor(colors[i].toInt(),colors[i+1].toInt(),colors[i+2].toInt(),colors[i+3].toInt()));
                     colorCell(y, x);
                     emit loadColor(y, x);
                     x++;
@@ -395,6 +395,8 @@ void SpriteView::setActiveColor(QColor color)
 	ui->colorButton->setStyleSheet(COLOR_STYLE.arg(activeColor.name()));
 	ui->colorButton->setAutoFillBackground(true);
 	ui->colorButton->setFlat(true);
+    std::tuple<int,int,int,int> currentColor(activeColor.red(), activeColor.green(), activeColor.blue(), activeColor.alpha());
+    emit pixelColor(currentColor);
 }
 
 /*
@@ -407,8 +409,6 @@ void SpriteView::on_colorButton_clicked()
     if (chosenColor.isValid())
     {
         setActiveColor(chosenColor);
-        std::tuple<int,int,int,int> color(activeColor.red(), activeColor.green(), activeColor.blue(), activeColor.alpha());
-        emit pixelColor(color);
 	}
 }
 
@@ -642,7 +642,6 @@ void SpriteView::cleanUp()
             delete ui->tableWidget->item(r,c);
         }
     }
-    //delete ui->tableWidget;
 
     //Frames
     for(int i = 0; i < frameCount; i++)
