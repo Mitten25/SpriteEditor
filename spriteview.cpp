@@ -40,6 +40,12 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
     QShortcut *eraser = new QShortcut(QKeySequence("Ctrl+E"), this);
     connect(eraser, SIGNAL(activated()), this, SLOT(on_eraseButton_clicked()));
 
+    QShortcut *frame = new QShortcut(QKeySequence("Ctrl+F"), this);
+    connect(frame, SIGNAL(activated()), this, SLOT(initNewFrame()));
+
+    QShortcut *onion = new QShortcut(QKeySequence("Ctrl+T"), this);
+    connect(onion, SIGNAL(activated()), this, SLOT(showOnionSkins()));
+
     // Add Frame
     connect(ui->addFrameButton, SIGNAL(clicked(bool)), this, SLOT(initNewFrame()));
 
