@@ -57,7 +57,6 @@ private slots:
     void updatePrevImages(QVector<QImage> images);
     void changeFPS(int);
     void showOnionSkins();
-
     void on_drawButton_clicked();
 
 private:
@@ -87,6 +86,8 @@ private:
     QColor getActiveColor();
     int getCurrentFrameIndex();
     void cleanUp();
+    void hideOnionSkins();
+    void resizeEvent(QResizeEvent* event);
 };
 
 #endif // SPRITEVIEW_H

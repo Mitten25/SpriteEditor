@@ -265,7 +265,7 @@ void SpriteView::initMainDrawBoxItems(int row, int column)
         for (int c = 0; c < column; c++) {
             ui->tableWidget->setItem(r, c, new QTableWidgetItem);
 		}
-	}
+    }
 }
 
 /*
@@ -273,29 +273,33 @@ void SpriteView::initMainDrawBoxItems(int row, int column)
  */
 void SpriteView::initNewFrame()
 {
-    QTableWidgetItem *newRow = new QTableWidgetItem();
-    ui->framesTable->setRowCount(frameCount+1);
-    ui->framesTable->setColumnCount(1);
-    ui->framesTable->setItem(frameCount+1, 1, newRow);
-    ui->framesTable->verticalHeader()->resizeSection(frameCount, 135);
-    ui->framesTable->horizontalHeader()->resizeSection(frameCount, 220);
-    ui->framesTable->horizontalHeader()->setVisible(false);
+    if(ui->addFrameButton->isEnabled())
+    {
+        hideOnionSkins();
+        QTableWidgetItem *newRow = new QTableWidgetItem();
+        ui->framesTable->setRowCount(frameCount+1);
+        ui->framesTable->setColumnCount(1);
+        ui->framesTable->setItem(frameCount+1, 1, newRow);
+        ui->framesTable->verticalHeader()->resizeSection(frameCount, 135);
+        ui->framesTable->horizontalHeader()->resizeSection(frameCount, 220);
+        ui->framesTable->horizontalHeader()->setVisible(false);
 
-    QTableWidget *newFrame = new QTableWidget();
-    newFrame->setObjectName("tableWidget"+QString::number(frameCount));
+        QTableWidget *newFrame = new QTableWidget();
+        newFrame->setObjectName("tableWidget"+QString::number(frameCount));
 
-    initFrameItem(newFrame);
-	// clear the current drawing frame
-    initMainDrawBoxItems(rows_, columns_);
+        initFrameItem(newFrame);
+        // clear the current drawing frame
+        initMainDrawBoxItems(rows_, columns_);
 
-    ui->framesTable->setCellWidget(frameCount, 0, newFrame);
-    frameCount++;
-    //void sendData(){emit redirectData(edit->text());}
-    emit frameCreated(Frame::fromTableWidget(ui->tableWidget));
+        ui->framesTable->setCellWidget(frameCount, 0, newFrame);
+        frameCount++;
+        //void sendData(){emit redirectData(edit->text());}
+        emit frameCreated(Frame::fromTableWidget(ui->tableWidget));
 
-	// Set this to be the current frame(/TableWidget)
-	currentTableWidget = newFrame;
-    emit createFrame(rows_, columns_);
+        // Set this to be the current frame(/TableWidget)
+        currentTableWidget = newFrame;
+        emit createFrame(rows_, columns_);
+    }
 }
 
 /*
@@ -383,7 +387,9 @@ void SpriteView::on_colorButton_clicked()
 	QColor chosenColor = QColorDialog::getColor();
 	// if user didn't cancel the dialog, set the color to the one chosen 
 	if (chosenColor.isValid()) {
-		setActiveColor(chosenColor);
+        setActiveColor(chosenColor);
+        std::tuple<int,int,int,int> color(activeColor.red(), activeColor.green(), activeColor.blue(), activeColor.alpha());
+        emit pixelColor(color);
 	}
 }
 
@@ -420,6 +426,7 @@ void SpriteView::onFrameSelected(QTableWidgetItem *item)
 	// Copy the contents of this frame to the main draw box 
 	copyQTableWidgetContents(parent, ui->tableWidget); 
 	currentTableWidget = parent;
+    hideOnionSkins();
 }
 
 /*
@@ -486,34 +493,43 @@ void SpriteView::changeFPS(int fps)
  */
 void SpriteView::showOnionSkins()
 {
-    int currentFrameI = getCurrentFrameIndex();
-    if(onionTables[0]->isVisible())
-        for(int i = 0; i < 3; i++)
-            onionTables[i]->hide();
-    else
+    if(onionTables[0]!=NULL)
     {
-        if(currentFrameI != 0)
+        int currentFrameI = getCurrentFrameIndex();
+        if(onionTables[0]->isVisible())
+            hideOnionSkins();
+        else
         {
-            int j = 0;
-            int i = currentFrameI-1;
-            while( i >= 0 && i != currentFrameI-4)//for(int i= currentFrameI-1; 0 <= i; i--)
+            if(currentFrameI != 0)
             {
-                QTableWidget *temp = (QTableWidget*)ui->framesTable->cellWidget(i, 0);
-                for (int r = 0; r < rows_; r++) {
-                    for (int c = 0; c < columns_; c++) {
-                        QColor fromColor =temp->item(r,c)->background().color();
-                        if(fromColor.alpha()!=0)
-                            fromColor.setAlpha(50);
-                        onionTables[j]->item(r, c)->setBackground(fromColor);
+                int j = 0;
+                int i = currentFrameI-1;
+                while( i >= 0 && i != currentFrameI-4)//for(int i= currentFrameI-1; 0 <= i; i--)
+                {
+                    QTableWidget *temp = (QTableWidget*)ui->framesTable->cellWidget(i, 0);
+                    for (int r = 0; r < rows_; r++) {
+                        for (int c = 0; c < columns_; c++) {
+                            QColor fromColor =temp->item(r,c)->background().color();
+                            if(fromColor.alpha()!=0)
+                                fromColor.setAlpha(50);
+                            onionTables[j]->item(r, c)->setBackground(fromColor);
+                        }
                     }
+                    onionTables[j]->show();
+                    j++;
+                    i--;
                 }
-                onionTables[j]->show();
-                j++;
-                i--;
             }
         }
     }
+}
 
+void SpriteView::hideOnionSkins()
+{
+    if(onionTables[0] != NULL)
+        if(onionTables[0]->isVisible())
+            for(int i = 0; i < 3; i++)
+                onionTables[i]->hide();
 }
 /*
  * Initialize onion tables
@@ -546,6 +562,9 @@ void SpriteView::initOnionTables()
     }
 }
 
+/*
+ * Gets the index of the current frame being displayed
+ */
 int SpriteView::getCurrentFrameIndex()
 {
     int currentFrameIndex = 0;
@@ -555,6 +574,23 @@ int SpriteView::getCurrentFrameIndex()
             currentFrameIndex = i;
     }
     return currentFrameIndex;
+}
+
+void SpriteView::resizeEvent(QResizeEvent* event)
+{/*
+    // need to reset tablewidget so the width and height aren't fixed when
+    // new file is made
+    if(columns_>rows_)
+    {
+        int ratio = ceil((double)rows_*(ui->tableWidget->width()/columns_));
+        ui->tableWidget->setFixedHeight(ratio);
+    }
+    else
+    {
+        int ratio = ceil((double)columns_*(ui->tableWidget->height()/rows_));
+        ui->tableWidget->setFixedWidth(ratio);
+    }
+*/
 }
 
 /*
@@ -568,6 +604,7 @@ void SpriteView::cleanUp()
             delete ui->tableWidget->item(r,c);
         }
     }
+    delete ui->tableWidget;
 
     //Frames
     for(int i = 0; i < frameCount; i++)
