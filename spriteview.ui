@@ -709,6 +709,14 @@ SKIN</string>
         <string>Add Frame</string>
        </property>
       </widget>
+      <widget class="QPushButton" name="duplicateButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>Duplicate Frame</string>
+       </property>
+      </widget>
       <widget class="QLabel" name="fpsLabel">
        <property name="text">
         <string>FPS</string>
@@ -755,7 +763,7 @@ SKIN</string>
      <x>0</x>
      <y>0</y>
      <width>913</width>
-     <height>16</height>
+     <height>22</height>
     </rect>
    </property>
    <property name="styleSheet">
