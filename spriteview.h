@@ -79,6 +79,7 @@ private:
     QVector<QImage> prevImages;
     QStackedLayout *stackedLayout;
     QTableWidget *onionTables[3];
+    QResizeEvent *triggerResizer;
 
     void initMainDrawBoxItems(int, int);
     void initFrameItem(QTableWidget *newFrame);
@@ -92,6 +93,7 @@ private:
     void cleanUp();
     void hideOnionSkins();
     void resizeEvent(QResizeEvent* event);
+    void triggerResizeEvent();
 };
 
 #endif // SPRITEVIEW_H

@@ -52,6 +52,13 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
     QShortcut *onion = new QShortcut(QKeySequence("Ctrl+T"), this);
     connect(onion, SIGNAL(activated()), this, SLOT(showOnionSkins()));
 
+    QShortcut *color = new QShortcut(QKeySequence("Ctrl+C"), this);
+    connect(color, SIGNAL(activated()), this, SLOT(on_colorButton_clicked()));
+
+    QShortcut *duplicate = new QShortcut(QKeySequence("Ctrl+V"),this);
+    connect(duplicate, SIGNAL(activated()), this, SLOT(initNewFrame()));
+    connect(duplicate, SIGNAL(activated()), &model, SLOT(duplicate()));
+
     // Add Frame
     connect(ui->addFrameButton, SIGNAL(clicked(bool)), this, SLOT(initNewFrame()));
 
@@ -207,6 +214,7 @@ void SpriteView::openFile()
             }
             ui->previewLabel->clear();
             currentFrame++;
+            triggerResizeEvent();
         }
         // Reset activeColor
         setActiveColor(QColor(0, 0, 0, 255));
@@ -273,6 +281,7 @@ void SpriteView::initStartFrame()
     initNewFrame();
     initPreview();
     initOnionTables();
+    triggerResizeEvent();
     timer->stop();
 }
 
@@ -612,6 +621,8 @@ void SpriteView::initOnionTables()
         onionTables[i]->setObjectName("onionTable"+QString::number(i));
         onionTables[i]->setStyleSheet("background-color:rgba(0,0,0,0)");
         onionTables[i]->hide();
+        onionTables[i]->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        onionTables[i]->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         stackedLayout->addWidget(onionTables[i]);
         for (int r = 0; r < rows_; r++)
         {
@@ -638,21 +649,51 @@ int SpriteView::getCurrentFrameIndex()
     return currentFrameIndex;
 }
 
+/*
+ * Used to resize main drawing table and onion skinning tables when user resizes.
+ */
 void SpriteView::resizeEvent(QResizeEvent* event)
-{/*
-    // need to reset tablewidget so the width and height aren't fixed when
-    // new file is made
+{
     if(columns_>rows_)
     {
         int ratio = ceil((double)rows_*(ui->tableWidget->width()/columns_));
         ui->tableWidget->setFixedHeight(ratio);
+        ui->tableWidget->setFixedWidth(QWIDGETSIZE_MAX);
+        for(int i = 0; i < 3; i++)
+        {
+            if(onionTables[i] !=NULL)
+            {
+                onionTables[i]->setFixedHeight(ui->tableWidget->height());
+                onionTables[i]->setFixedWidth(ui->tableWidget->maximumWidth());
+            }
+        }
     }
-    else
+    else if(ui->tableWidget->rowCount()!=0 && ui->tableWidget->columnCount()!=0)
     {
         int ratio = ceil((double)columns_*(ui->tableWidget->height()/rows_));
         ui->tableWidget->setFixedWidth(ratio);
+        ui->tableWidget->setFixedHeight(QWIDGETSIZE_MAX);
+        for(int i = 0; i < 3; i++)
+        {
+            if(onionTables[i] !=NULL)
+            {
+                onionTables[i]->setFixedHeight(ui->tableWidget->maximumHeight());
+                onionTables[i]->setFixedWidth(ui->tableWidget->width());
+            }
+        }
     }
-*/
+    event->isAccepted();
+}
+
+/*
+ * Used to trigger a resizeEvent in code when new file or open file is clicked.
+ */
+void SpriteView::triggerResizeEvent()
+{
+    QSize newSize(100,100);
+    QSize oldSize = this->size();
+    triggerResizer = new QResizeEvent(newSize,oldSize);
+    resizeEvent(triggerResizer);
 }
 
 /*
@@ -670,6 +711,7 @@ void SpriteView::cleanUp()
     }
 
     //Frames
+    frames.clear();
     for(int i = 0; i < frameCount; i++)
     {
         for (int r = 0; r < rows_; r++)
@@ -701,6 +743,8 @@ void SpriteView::cleanUp()
     }
     if(stackedLayout!=NULL)
         delete stackedLayout;
+    if (triggerResizer!=NULL)
+        delete triggerResizer;
 }
 SpriteView::~SpriteView()
 {
