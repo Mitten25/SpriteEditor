@@ -23,6 +23,20 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
     *onionTables = {NULL};
 
     // Short Cuts
+    QShortcut *save = new QShortcut(QKeySequence("Ctrl+S"), this);
+    connect(save, SIGNAL(activated()), &model, SLOT(saveFrame()));
+
+    QShortcut *open = new QShortcut(QKeySequence("Ctrl+O"), this);
+    connect(open, SIGNAL(activated()), &model, SLOT(resetFrame()));
+    connect(open, SIGNAL(activated()), this, SLOT(openFile()));
+
+    QShortcut *newfile = new QShortcut(QKeySequence("Ctrl+N"), this);
+    connect(newfile, SIGNAL(activated()), &model, SLOT(resetFrame()));
+    connect(newfile, SIGNAL(activated()), this, SLOT(newFile()));
+
+    //QShortcut *draw = new QShortcut(QKeySequence("Ctrl+D"), this);
+    //connect(draw, SIGNAL(activated()), this, SLOT();
+
     QShortcut *eraser = new QShortcut(QKeySequence("Ctrl+E"), this);
     connect(eraser, SIGNAL(activated()), this, SLOT(on_eraseButton_clicked()));
 
@@ -582,4 +596,8 @@ SpriteView::~SpriteView()
     cleanUp();
     delete timer;
     delete ui;
+}
+
+void SpriteView::on_drawButton_clicked()
+{
 }

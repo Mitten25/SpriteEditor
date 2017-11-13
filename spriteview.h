@@ -58,6 +58,8 @@ private slots:
     void changeFPS(int);
     void showOnionSkins();
 
+    void on_drawButton_clicked();
+
 private:
     Ui::SpriteView *ui;
 	// the widget for the currently active frame
