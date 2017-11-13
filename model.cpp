@@ -12,6 +12,10 @@ void Model::newFrame(int height, int width)
     Frame temp(height, width);
     frames.append(temp);
     currFrame = frames.size() - 1;
+    if (frames.size() >= 2)
+    {
+        frames[currFrame].setColor(frames[currFrame-1].getColor());
+    }
 }
 
 void Model::saveFrame()
@@ -26,6 +30,7 @@ void Model::resetFrame()
     frames.clear();
     draw = true;
     bucket = false;
+    eraser = false;
 }
 
 void Model::exportGif(QString file_name, int rows, int columns)
@@ -150,16 +155,20 @@ void Model::paintBucket(int x, int y) {
     int y1 = y - 1;
     int y2 = y + 1;
 
-    if (x1 >= 0 && frames[currFrame].getPixel(x1, y) == currentPixel) {
+    if (x1 >= 0 && frames[currFrame].getPixel(x1, y) == currentPixel)
+    {
         QtConcurrent::run(this, &Model::paintBucket, x1, y);
     }
-    if (x2 < width && frames[currFrame].getPixel(x2, y) == currentPixel) {
+    if (x2 < width && frames[currFrame].getPixel(x2, y) == currentPixel)
+    {
         QtConcurrent::run(this, &Model::paintBucket, x2, y);
     }
-    if (y1 >= 0 && frames[currFrame].getPixel(x, y1) == currentPixel) {
+    if (y1 >= 0 && frames[currFrame].getPixel(x, y1) == currentPixel)
+    {
         QtConcurrent::run(this, &Model::paintBucket, x, y1);
     }
-    if (y2 < height && frames[currFrame].getPixel(x, y2) == currentPixel) {
+    if (y2 < height && frames[currFrame].getPixel(x, y2) == currentPixel)
+    {
         QtConcurrent::run(this, &Model::paintBucket, x, y2);
     }
 
