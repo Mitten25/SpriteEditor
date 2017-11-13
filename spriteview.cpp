@@ -34,11 +34,14 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
     connect(newfile, SIGNAL(activated()), &model, SLOT(resetFrame()));
     connect(newfile, SIGNAL(activated()), this, SLOT(newFile()));
 
-    //QShortcut *draw = new QShortcut(QKeySequence("Ctrl+D"), this);
-    //connect(draw, SIGNAL(activated()), this, SLOT();
+    QShortcut *draw = new QShortcut(QKeySequence("Ctrl+D"), this);
+    connect(draw, SIGNAL(activated()), &model, SLOT(drawToolOn()));
+
+    QShortcut *bucket = new QShortcut(QKeySequence("Ctrl+B"), this);
+    connect(bucket, SIGNAL(activated()), &model, SLOT(bucketToolOn()));
 
     QShortcut *eraser = new QShortcut(QKeySequence("Ctrl+E"), this);
-    connect(eraser, SIGNAL(activated()), this, SLOT(on_eraseButton_clicked()));
+    connect(eraser, SIGNAL(activated()), &model, SLOT(eraserToolOn()));
 
     QShortcut *frame = new QShortcut(QKeySequence("Ctrl+F"), this);
     connect(frame, SIGNAL(activated()), this, SLOT(initNewFrame()));
@@ -65,9 +68,10 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
     connect(this, SIGNAL(updateSpeed(int)), &model, SLOT(updateSpeed(int)));
 
     // Button
-    connect(ui->drawButton, SIGNAL(clicked(bool)), &model, SLOT(drawToolOn(bool)));
-    connect(ui->eraseButton, SIGNAL(clicked(bool)), &model, SLOT(drawToolOn(bool)));
-    connect(ui->bucketButton, SIGNAL(clicked(bool)), &model, SLOT(bucketToolOn(bool)));
+    connect(ui->drawButton, SIGNAL(clicked(bool)), &model, SLOT(drawToolOn()));
+    connect(ui->eraseButton, SIGNAL(clicked(bool)), &model, SLOT(eraserToolOn()));
+    connect(&model, SIGNAL(eraserTurnOn(bool)), this, SLOT(eraserOn(bool)));
+    connect(ui->bucketButton, SIGNAL(clicked(bool)), &model, SLOT(bucketToolOn()));
 
     // Create Frame in Model
     connect(this, SIGNAL(createFrame(int,int)), &model, SLOT(newFrame(int,int)));
@@ -400,17 +404,27 @@ void SpriteView::on_colorButton_clicked()
  */
 void SpriteView::colorCell(int row, int column)
 {
-    std::tuple<int, int, int, int> color (activeColor.red(), activeColor.green(), activeColor.blue(), activeColor.alpha());
-    emit pixelColor(color);
-	// change the color of the currently displayed drawing
-    ui->tableWidget->item(row, column)->setBackground(activeColor);
-	// also change the color of the current selected frame
-    currentTableWidget->item(row,column)->setBackground(activeColor);
+    if (eraser == true)
+    {
+        QColor eraserColor(255, 255, 255, 0);
+        ui->tableWidget->item(row, column)->setBackground(eraserColor);
+        currentTableWidget->item(row,column)->setBackground(eraserColor);
+    }
+    else
+    {
+        // change the color of the currently displayed drawing
+        ui->tableWidget->item(row, column)->setBackground(activeColor);
+        // also change the color of the current selected frame
+        currentTableWidget->item(row,column)->setBackground(activeColor);
+    }
 }
 
-void SpriteView::on_eraseButton_clicked()
+/*
+ * Enables the eraser w/o changing the current active color
+ */
+void SpriteView::eraserOn(bool on)
 {
-    setActiveColor(QColor(255, 255, 255, 0));
+    eraser = on;
 }
 
 /*
@@ -604,7 +618,7 @@ void SpriteView::cleanUp()
             delete ui->tableWidget->item(r,c);
         }
     }
-    delete ui->tableWidget;
+    //delete ui->tableWidget;
 
     //Frames
     for(int i = 0; i < frameCount; i++)

@@ -36,6 +36,11 @@ void Frame::setPixel(int x, int y)
     pixels[x][y] = color;
 }
 
+void Frame::erasePixel(int x, int y)
+{
+    pixels[x][y] = std::tuple<int, int, int, int> (255, 255, 255, 0);
+}
+
 void Frame::setColor(std::tuple <int, int, int, int> c)
 {
     color = c;

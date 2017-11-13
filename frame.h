@@ -22,8 +22,10 @@ public:
     std::tuple <int, int, int, int> getColor();
 	static Frame fromTableWidget(QTableWidget* tableWidget);
     QString toString();
-    std::tuple <int, int, int, int> color;
     std::tuple<int,int> getSize();
+    void erasePixel(int x, int y);
+
+    std::tuple <int, int, int, int> color;
     int row;
     int column;
 };

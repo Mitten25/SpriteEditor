@@ -27,6 +27,7 @@ signals:
     void getFrame(QVector<Frame> frame);
     void getImages(QVector<QImage> images);
     void colorThisPixel(int,int);
+    void eraserTurnOn(bool);
 
 public slots:
     void newFrame(int height, int width);
@@ -38,8 +39,9 @@ public slots:
     void resetFrame();
     void updateSpeed(int);
     void paintCommand(int, int);
-    void bucketToolOn(bool);
-    void drawToolOn(bool);
+    void bucketToolOn();
+    void drawToolOn();
+    void eraserToolOn();
 
 private:
     QVector<Frame> frames;
@@ -47,6 +49,7 @@ private:
     int speed;
     bool bucket;
     bool draw;
+    bool eraser;
 
     QVector<QImage> framesToImages(int rows, int columns);
     void colorSection(int mult, QImage *image, int row, int column, QRgb value);

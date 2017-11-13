@@ -98,7 +98,16 @@ void Model::paintCommand(int x, int y) {
 
 void Model::setFramePixel(int x, int y)
 {
-    frames[currFrame].setPixel(x, y);
+    if (eraser == true)
+    {
+        frames[currFrame].erasePixel(x, y);
+        emit eraserTurnOn(true);
+    }
+    else
+    {
+        frames[currFrame].setPixel(x, y);
+        emit eraserTurnOn(false);
+    }
     emit colorThisPixel(x, y);
 }
 
@@ -106,7 +115,6 @@ void Model::setColor(tuple<int, int, int, int> c)
 {
     frames[currFrame].setColor(c);
 }
-
 
 void Model::updatePreview()
 {
@@ -151,14 +159,22 @@ void Model::paintBucket(int x, int y) {
 
 }
 
-void Model::bucketToolOn(bool on) {
+void Model::bucketToolOn() {
     bucket = true;
     draw = false;
+    eraser = false;
 }
 
-void Model::drawToolOn(bool on) {
+void Model::drawToolOn() {
     draw = true;
     bucket = false;
+    eraser = false;
+}
+
+void Model::eraserToolOn() {
+    draw = false;
+    bucket = false;
+    eraser = true;
 }
 
 

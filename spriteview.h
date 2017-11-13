@@ -46,7 +46,7 @@ signals:
 private slots:
     void on_colorButton_clicked();
     void colorCell(int row, int column);
-    void on_eraseButton_clicked();
+    void eraserOn(bool);
     void newFile();
     void saveFile(QVector<Frame>);
     void openFile();
@@ -71,11 +71,13 @@ private:
     Form *popup;
     int rows_;
     int columns_;
+    bool eraser;
     QTimer *timer;
     int currentPrev;
     QVector<QImage> prevImages;
     QStackedLayout *stackedLayout;
     QTableWidget *onionTables[3];
+
     void initMainDrawBoxItems(int, int);
     void initFrameItem(QTableWidget *newFrame);
     void initPreview();
