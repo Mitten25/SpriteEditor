@@ -80,6 +80,7 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
     connect(this, SIGNAL(createFrame(int,int)), &model, SLOT(newFrame(int,int)));
     connect(this, SIGNAL(currentFrame(int)), &model, SLOT(currentFrame(int)));
     connect(this, SIGNAL(pixelColor(std::tuple<int,int,int,int>)), &model, SLOT(setColor(std::tuple<int,int,int,int>)));
+    connect(ui->tableWidget, SIGNAL(cellPressed(int,int)), &model, SLOT(paintCommand(int,int)));
     connect(ui->tableWidget, SIGNAL(cellEntered(int,int)), &model, SLOT(paintCommand(int,int)));
     connect(&model, SIGNAL(colorThisPixel(int,int)), this, SLOT(colorCell(int,int)));
 

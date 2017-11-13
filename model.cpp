@@ -58,7 +58,7 @@ QVector<QImage> Model::framesToImages(int rows, int columns)
 {
     QVector<QImage> images;
     int i, j, k;
-    int mult = 8;
+    int mult = 1;
     for(i = 0; i < frames.length(); i++)
     {
         QImage temp(QSize(columns*mult, rows*mult), QImage::Format_ARGB32);
