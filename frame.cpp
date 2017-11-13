@@ -8,14 +8,14 @@ Frame::Frame(int height, int width)
     column = width;
     color = std::tuple<int,int,int,int> (0,0,0,255);
 
-    //Will set everything to white
+    //Will set everything to transparent
     for (int y = 0; y < row; y++)
     {
         pixels.append(QVector<std::tuple<int,int,int,int>>(column));
         for (int x = 0; x < column; x++)
         {
-            std::tuple<int,int,int,int> white (255,255,255,0);
-            pixels[y][x] = white;
+            std::tuple<int,int,int,int> blank (255,255,255,0);
+            pixels[y][x] = blank;
         }
     }
 }
@@ -25,14 +25,13 @@ Frame::Frame()
 
 }
 
-tuple<int, int, int, int> Frame::getPixel(int x, int y) {
-    //To be implemented, may not be using result variable, placed there just as filled to compile.
+tuple<int, int, int, int> Frame::getPixel(int x, int y)
+{
     return pixels[x][y];
 }
 
 void Frame::setPixel(int x, int y)
 {
-    //To be implemented
     pixels[x][y] = color;
 }
 
@@ -58,8 +57,10 @@ Frame Frame::fromTableWidget(QTableWidget* tableWidget)
     Frame frame;
     QVector<std::tuple<int, int, int, int>> colors;
 
-    for (int c = 0; c < columns; c++) {
-        for (int r = 0; r < rows; r++) {
+    for (int c = 0; c < columns; c++)
+    {
+        for (int r = 0; r < rows; r++)
+        {
             QColor color = tableWidget->itemAt(r, c)->backgroundColor();
             std::tuple<int,int,int,int> mytuple (color.red(), color.green(), color.blue(), color.alpha());
             colors.push_back(mytuple);
@@ -67,8 +68,6 @@ Frame Frame::fromTableWidget(QTableWidget* tableWidget)
         frame.pixels.push_back(colors);
         colors.clear();
     }
-    //if (frames[currFrame].pixels.size() == 0)
-    //    frames[currFrame].pixels = temp;
     return frame;
 }
 

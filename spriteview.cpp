@@ -97,6 +97,9 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
 
 }
 
+/*
+ * Allows the user to save their sprite sheet.
+ */
 void SpriteView::saveFile(QVector<Frame> f)
 {
     QString file_name = QFileDialog::getSaveFileName(this,
@@ -135,6 +138,9 @@ void SpriteView::saveFile(QVector<Frame> f)
     }
 }
 
+/*
+ * Allows the user to open a saved .ssp file
+ */
 void SpriteView::openFile()
 {
     QString file_name = QFileDialog::getOpenFileName(this,
@@ -156,24 +162,20 @@ void SpriteView::openFile()
         // Start reading information from file.
         QTextStream in(&file);
 
-        //frames.clear();
-        //ui->framesTable->clearContents();
+        QStringList heightAndWidth = in.readLine().split(" ");
+        rows_ = heightAndWidth[0].toInt();
+        columns_ = heightAndWidth[1].toInt();
 
-        QStringList height_and_width = in.readLine().split(" ");
-        rows_ = height_and_width[0].toInt();
-        columns_ = height_and_width[1].toInt();
-
-        //initTableItems(height, width);
         if(onionTables[0] != NULL)
             cleanUp();
         initStartFrame();
 
         QString frame = in.readLine();
 
-        int num_of_frames = frame.toInt();
-        int current_frame = 0;
+        int numOfFrames = frame.toInt();
+        int currentFrame = 0;
         // Looping to draw each frame
-        while (current_frame < num_of_frames)
+        while (currentFrame < numOfFrames)
         {
             int y = 0;
             // Looping to draw all of the pixels
@@ -200,7 +202,7 @@ void SpriteView::openFile()
                 initNewFrame();
             }
             ui->previewLabel->clear();
-            current_frame++;
+            currentFrame++;
         }
         // Reset activeColor
         setActiveColor(QColor(0, 0, 0, 255));
@@ -268,8 +270,10 @@ void SpriteView::initMainDrawBoxItems(int row, int column)
 {
     ui->tableWidget->setRowCount(row);
     ui->tableWidget->setColumnCount(column);
-    for (int r = 0; r < row; r++) {
-        for (int c = 0; c < column; c++) {
+    for (int r = 0; r < row; r++)
+    {
+        for (int c = 0; c < column; c++)
+        {
             ui->tableWidget->setItem(r, c, new QTableWidgetItem);
 		}
     }
@@ -338,8 +342,10 @@ void SpriteView::initFrameItem(QTableWidget *newFrame)
 	// (used for later clicking to set this to the current frame) 
     connect(newFrame, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(onFrameSelected(QTableWidgetItem*)));
 
-    for (int r = 0; r < rows_; r++) {
-        for (int c = 0; c < columns_; c++) {
+    for (int r = 0; r < rows_; r++)
+    {
+        for (int c = 0; c < columns_; c++)
+        {
             QTableWidgetItem *newItem = new QTableWidgetItem();
             newItem->setBackground(QColor(0,0,0,0));
             newFrame->setItem(r, c, newItem);
@@ -359,16 +365,20 @@ void SpriteView::initPreview()
  * Copy all of the colors in one QTableWidget to another
  * (this is used for copying from side panel frame to main draw window)
  */ 
-void SpriteView::copyQTableWidgetContents(QTableWidget* from, QTableWidget* to) {
+void SpriteView::copyQTableWidgetContents(QTableWidget* from, QTableWidget* to)
+{
 	// throw an error if they are not the same size
-	if (from->rowCount() != to->rowCount() || from->columnCount() != to->columnCount()) {
+    if (from->rowCount() != to->rowCount() || from->columnCount() != to->columnCount())
+    {
 		throw;
 	}
 
 	int rowCount = from->rowCount();
 	int columnCount = from->columnCount();
-    for (int r = 0; r < rowCount; r++) {
-        for (int c = 0; c < columnCount; c++) {
+    for (int r = 0; r < rowCount; r++)
+    {
+        for (int c = 0; c < columnCount; c++)
+        {
 			QColor fromColor = from->item(r, c)->background().color();
 			to->item(r, c)->setBackground(fromColor);
 		}
@@ -393,7 +403,8 @@ void SpriteView::on_colorButton_clicked()
 {
 	QColor chosenColor = QColorDialog::getColor();
 	// if user didn't cancel the dialog, set the color to the one chosen 
-	if (chosenColor.isValid()) {
+    if (chosenColor.isValid())
+    {
         setActiveColor(chosenColor);
         std::tuple<int,int,int,int> color(activeColor.red(), activeColor.green(), activeColor.blue(), activeColor.alpha());
         emit pixelColor(color);
@@ -575,8 +586,10 @@ void SpriteView::initOnionTables()
         onionTables[i]->setStyleSheet("background-color:rgba(0,0,0,0)");
         onionTables[i]->hide();
         stackedLayout->addWidget(onionTables[i]);
-        for (int r = 0; r < rows_; r++) {
-            for (int c = 0; c < columns_; c++) {
+        for (int r = 0; r < rows_; r++)
+        {
+            for (int c = 0; c < columns_; c++)
+            {
                 QTableWidgetItem *newItem = new QTableWidgetItem();
                 onionTables[i]->setItem(r, c, newItem);
             }
@@ -621,8 +634,10 @@ void SpriteView::resizeEvent(QResizeEvent* event)
 void SpriteView::cleanUp()
 {
     //Main Table
-    for (int r = 0; r < rows_; r++) {
-        for (int c = 0; c < columns_; c++) {
+    for (int r = 0; r < rows_; r++)
+    {
+        for (int c = 0; c < columns_; c++)
+        {
             delete ui->tableWidget->item(r,c);
         }
     }
@@ -631,8 +646,10 @@ void SpriteView::cleanUp()
     //Frames
     for(int i = 0; i < frameCount; i++)
     {
-        for (int r = 0; r < rows_; r++) {
-            for (int c = 0; c < columns_; c++) {
+        for (int r = 0; r < rows_; r++)
+        {
+            for (int c = 0; c < columns_; c++)
+            {
                 delete ((QTableWidget*)ui->framesTable->cellWidget(i,0))->item(r,c);
             }
         }
@@ -647,7 +664,8 @@ void SpriteView::cleanUp()
             onionTables[i]->hide();
             for (int r = 0; r < rows_; r++)
             {
-                for (int c = 0; c < columns_; c++) {
+                for (int c = 0; c < columns_; c++)
+                {
                     delete onionTables[i]->item(r,c);
                 }
             }

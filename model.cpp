@@ -96,6 +96,9 @@ void Model::paintCommand(int x, int y) {
     }
 }
 
+/*
+ * Sets the pixel in the model class
+ */
 void Model::setFramePixel(int x, int y)
 {
     if (eraser == true)
@@ -127,6 +130,9 @@ void Model::updateSpeed(int pace)
     speed = pace;
 }
 
+/*
+ * Recursive method in order for the bucket tool to work
+ */
 void Model::paintBucket(int x, int y) {
     tuple<int, int, int, int> currentPixel = frames[currFrame].getPixel(x, y);
     tuple<int, int, int, int> currentColor = frames[currFrame].getColor();
@@ -159,19 +165,31 @@ void Model::paintBucket(int x, int y) {
 
 }
 
-void Model::bucketToolOn() {
+/*
+ * Turns on the bucket tool
+ */
+void Model::bucketToolOn()
+{
     bucket = true;
     draw = false;
     eraser = false;
 }
 
-void Model::drawToolOn() {
+/*
+ * Turns on the draw tool
+ */
+void Model::drawToolOn()
+{
     draw = true;
     bucket = false;
     eraser = false;
 }
 
-void Model::eraserToolOn() {
+/*
+ * Turns on the eraser tool
+ */
+void Model::eraserToolOn()
+{
     draw = false;
     bucket = false;
     eraser = true;
