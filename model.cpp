@@ -44,7 +44,7 @@ void Model::exportGif(QString file_name, int rows, int columns)
     file.save(file_name);
 }
 
-void Model::currentFrame(int x, int y)
+void Model::currentFrame(int x)
 {
     currFrame = x;
 }

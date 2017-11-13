@@ -42,6 +42,7 @@ signals:
     void exportGifSig(QString file_name, int rows, int columns);
     void loadColor(int,int);
     void updateSpeed(int speed);
+    void currentFrame(int);
 
 private slots:
     void on_colorButton_clicked();

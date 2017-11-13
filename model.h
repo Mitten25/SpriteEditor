@@ -35,7 +35,7 @@ public slots:
     void saveFrame();
     void updatePreview();
     void exportGif(QString file_name, int rows, int columns);
-    void currentFrame(int,int);
+    void currentFrame(int);
     void resetFrame();
     void updateSpeed(int);
     void paintCommand(int, int);
