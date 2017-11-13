@@ -52,6 +52,7 @@ private:
     bool bucket;
     bool draw;
     bool eraser;
+    int dupFrame;
 
     QVector<QImage> framesToImages(int rows, int columns);
     void colorSection(int mult, QImage *image, int row, int column, QRgb value);

@@ -11,6 +11,7 @@ void Model::newFrame(int height, int width)
 {
     Frame temp(height, width);
     frames.append(temp);
+    dupFrame = currFrame;
     currFrame = frames.size() - 1;
     if (frames.size() >= 2)
     {
@@ -52,12 +53,13 @@ void Model::exportGif(QString file_name, int rows, int columns)
 void Model::currentFrame(int x)
 {
     currFrame = x;
+    dupFrame = currFrame;
 }
 
 void Model::duplicate()
 {
-    frames[currFrame] = frames[currFrame - 1];
-    emit dupThis(frames[currFrame-1]);
+    frames[currFrame] = frames[dupFrame];
+    emit dupThis(frames[dupFrame]);
 }
 
 QVector<QImage> Model::framesToImages(int rows, int columns)
