@@ -117,7 +117,6 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
 
     //Onion Skinning
     connect(ui->onionButton, SIGNAL(clicked(bool)), this, SLOT(showOnionSkins()));
-
 }
 
 /*
@@ -378,6 +377,7 @@ void SpriteView::deleteCurrFrame()
 {
     if(ui->deleteButton->isEnabled())
     {
+        currentPrev = 0;
         int newIndex = getCurrentFrameIndex();
         ui->framesTable->removeRow(getCurrentFrameIndex());
         frameCount--;
@@ -555,6 +555,7 @@ void SpriteView::previewAnim()
 {
     int ratioNum;
     QImage temp;
+
     if(rows_<columns_)
     {
         ratioNum = ceil((double)250/columns_);
