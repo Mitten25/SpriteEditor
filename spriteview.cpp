@@ -283,6 +283,7 @@ void SpriteView::initStartFrame()
     ui->framesTable->setColumnCount(0);
     ui->addFrameButton->setEnabled(true);
     ui->duplicateButton->setEnabled(true);
+    ui->colorButton->setEnabled(true);
     ui->deleteButton->setEnabled(false);
     ui->fpsSlider->setEnabled(true);
     ui->previewLabel->clear();
