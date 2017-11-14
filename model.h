@@ -40,6 +40,7 @@ public slots:
     void resetFrame();
     void updateSpeed(int);
     void duplicate();
+    void deleteFrame();
     void paintCommand(int, int);
     void bucketToolOn();
     void drawToolOn();

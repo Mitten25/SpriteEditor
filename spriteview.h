@@ -52,6 +52,7 @@ private slots:
     void saveFile(QVector<Frame>);
     void openFile();
     void initNewFrame();
+    void deleteCurrFrame();
     void exportGifWindow();
     void onFrameSelected(QTableWidgetItem *item);
     void previewAnim();

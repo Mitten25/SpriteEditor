@@ -19,6 +19,11 @@ void Model::newFrame(int height, int width)
     }
 }
 
+void Model::deleteFrame()
+{
+    frames.removeAt(currFrame);
+}
+
 void Model::saveFrame()
 {
     // TODO:
@@ -32,6 +37,8 @@ void Model::resetFrame()
     draw = true;
     bucket = false;
     eraser = false;
+    currFrame = 0;
+    speed = 0;
 }
 
 void Model::exportGif(QString file_name, int rows, int columns)

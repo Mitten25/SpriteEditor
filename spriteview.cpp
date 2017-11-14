@@ -62,6 +62,11 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
     // Add Frame
     connect(ui->addFrameButton, SIGNAL(clicked(bool)), this, SLOT(initNewFrame()));
 
+    //Delete Frame
+    connect(ui->deleteButton, SIGNAL(clicked(bool)), &model, SLOT(deleteFrame()));
+    connect(ui->deleteButton, SIGNAL(clicked(bool)), this, SLOT(deleteCurrFrame()));
+    //connect(&model, SIGNAL(deleteThis(Frame)), this, SLOT(deleteCurrFrame(Frame)));
+
     // File Menu
     connect(ui->actionSave_File, SIGNAL(triggered(bool)), &model, SLOT(saveFrame()));
     connect(&model, SIGNAL(getFrame(QVector<Frame>)), this, SLOT(saveFile(QVector<Frame>)));
@@ -272,6 +277,7 @@ void SpriteView::initStartFrame()
     ui->addFrameButton->setEnabled(true);
     ui->duplicateButton->setEnabled(true);
     ui->fpsSlider->setEnabled(true);
+    ui->previewLabel->clear();
     ui->fpsSlider->setValue(0);
     prevImages.clear();
     ui->onionButton->setEnabled(true);
@@ -340,12 +346,44 @@ void SpriteView::initNewFrame()
 
         ui->framesTable->setCellWidget(frameCount, 0, newFrame);
         frameCount++;
+        if(frameCount > 1)
+        {
+            ui->deleteButton->setEnabled(true);
+        }
         //void sendData(){emit redirectData(edit->text());}
         emit frameCreated(Frame::fromTableWidget(ui->tableWidget));
 
         // Set this to be the current frame(/TableWidget)
         currentTableWidget = newFrame;
         emit createFrame(rows_, columns_);
+    }
+}
+
+//Deletes the Frame that the user is currently using
+void SpriteView::deleteCurrFrame()
+{
+    if(ui->deleteButton->isEnabled()){
+        int newIndex = getCurrentFrameIndex();
+        ui->framesTable->removeRow(getCurrentFrameIndex());
+        frameCount--;
+        if(frameCount == 1)
+        {
+            ui->deleteButton->setEnabled(false);
+        }
+        QTableWidget* littleTable;
+        if(newIndex != frameCount)
+        {
+            littleTable = (QTableWidget*)ui->framesTable->cellWidget(newIndex, 0);
+        }
+        else
+        {
+            littleTable = (QTableWidget*)ui->framesTable->cellWidget(newIndex - 1, 0);
+        }
+        // Copy the contents of this frame to the main draw box
+        copyQTableWidgetContents(littleTable, ui->tableWidget);
+        currentTableWidget = littleTable;
+        hideOnionSkins();
+        emit currentFrame(getCurrentFrameIndex());
     }
 }
 
