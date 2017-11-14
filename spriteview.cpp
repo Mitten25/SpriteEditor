@@ -58,18 +58,24 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
     QShortcut *duplicate = new QShortcut(QKeySequence("Ctrl+V"),this);
     connect(duplicate, SIGNAL(activated()), this, SLOT(initNewFrame()));
     connect(duplicate, SIGNAL(activated()), &model, SLOT(duplicate()));
+    connect(duplicate, SIGNAL(activated()), &model, SLOT(updatePreview()));
 
     QShortcut *deleteFrame = new QShortcut(QKeySequence("Ctrl+W"),this);
     connect(deleteFrame, SIGNAL(activated()), &model, SLOT(deleteFrame()));
     connect(deleteFrame, SIGNAL(activated()), this, SLOT(deleteCurrFrame()));
+    connect(deleteFrame, SIGNAL(activated()), &model, SLOT(updatePreview()));
 
-    // Add Frame
+    // Frames
     connect(ui->addFrameButton, SIGNAL(clicked(bool)), this, SLOT(initNewFrame()));
 
-    //Delete Frame
     connect(ui->deleteButton, SIGNAL(clicked(bool)), &model, SLOT(deleteFrame()));
     connect(ui->deleteButton, SIGNAL(clicked(bool)), this, SLOT(deleteCurrFrame()));
-    //connect(&model, SIGNAL(deleteThis(Frame)), this, SLOT(deleteCurrFrame(Frame)));
+    connect(ui->deleteButton, SIGNAL(clicked(bool)), &model, SLOT(updatePreview()));
+
+    connect(ui->duplicateButton, SIGNAL(clicked(bool)), this, SLOT(initNewFrame()));
+    connect(ui->duplicateButton, SIGNAL(clicked(bool)), &model, SLOT(duplicate()));
+    connect(ui->duplicateButton, SIGNAL(clicked(bool)), &model, SLOT(updatePreview()));
+    connect(&model, SIGNAL(dupThis(Frame)), this, SLOT(duplicateFrame(Frame)));
 
     // File Menu
     connect(ui->actionSave_File, SIGNAL(triggered(bool)), &model, SLOT(saveFrame()));
@@ -91,9 +97,6 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
     connect(ui->eraseButton, SIGNAL(clicked(bool)), &model, SLOT(eraserToolOn()));
     connect(&model, SIGNAL(eraserTurnOn(bool)), this, SLOT(eraserOn(bool)));
     connect(ui->bucketButton, SIGNAL(clicked(bool)), &model, SLOT(bucketToolOn()));
-    connect(ui->duplicateButton, SIGNAL(clicked(bool)), this, SLOT(initNewFrame()));
-    connect(ui->duplicateButton, SIGNAL(clicked(bool)), &model, SLOT(duplicate()));
-    connect(&model, SIGNAL(dupThis(Frame)), this, SLOT(duplicateFrame(Frame)));
 
     // Create Frame in Model
     connect(this, SIGNAL(createFrame(int,int)), &model, SLOT(newFrame(int,int)));
