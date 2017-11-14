@@ -21,14 +21,15 @@ void Model::newFrame(int height, int width)
 
 void Model::deleteFrame()
 {
-    frames.removeAt(currFrame);
+    if (frames.size() > 1)
+    {
+        frames.removeAt(currFrame);
+    }
 }
 
 void Model::saveFrame()
 {
-    // TODO:
     emit getFrame(frames);
-    //need else for layer number
 }
 
 void Model::resetFrame()
@@ -65,8 +66,11 @@ void Model::currentFrame(int x)
 
 void Model::duplicate()
 {
-    frames[currFrame] = frames[dupFrame];
-    emit dupThis(frames[dupFrame]);
+    if (frames.size() > 0)
+    {
+        frames[currFrame] = frames[dupFrame];
+        emit dupThis(frames[dupFrame]);
+    }
 }
 
 QVector<QImage> Model::framesToImages(int rows, int columns)

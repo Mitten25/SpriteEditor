@@ -59,6 +59,10 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
     connect(duplicate, SIGNAL(activated()), this, SLOT(initNewFrame()));
     connect(duplicate, SIGNAL(activated()), &model, SLOT(duplicate()));
 
+    QShortcut *deleteFrame = new QShortcut(QKeySequence("Ctrl+W"),this);
+    connect(deleteFrame, SIGNAL(activated()), &model, SLOT(deleteFrame()));
+    connect(deleteFrame, SIGNAL(activated()), this, SLOT(deleteCurrFrame()));
+
     // Add Frame
     connect(ui->addFrameButton, SIGNAL(clicked(bool)), this, SLOT(initNewFrame()));
 
@@ -272,10 +276,12 @@ void SpriteView::initStartFrame()
 {
     // Reset UI
     frameCount = 0;
+    currentPrev = 0;
     ui->framesTable->setRowCount(0);
     ui->framesTable->setColumnCount(0);
     ui->addFrameButton->setEnabled(true);
     ui->duplicateButton->setEnabled(true);
+    ui->deleteButton->setEnabled(false);
     ui->fpsSlider->setEnabled(true);
     ui->previewLabel->clear();
     ui->fpsSlider->setValue(0);
@@ -291,6 +297,9 @@ void SpriteView::initStartFrame()
     timer->stop();
 }
 
+/*
+ * Allows user to export the preview into a gif
+ */
 void SpriteView::exportGifWindow()
 {
     QString file_name = QFileDialog::getSaveFileName(this,
@@ -326,7 +335,7 @@ void SpriteView::initMainDrawBoxItems(int row, int column)
  */
 void SpriteView::initNewFrame()
 {
-    if(ui->addFrameButton->isEnabled())
+    if(ui->addFrameButton->isEnabled() || ui->duplicateButton->isEnabled())
     {
         hideOnionSkins();
         QTableWidgetItem *newRow = new QTableWidgetItem();
@@ -359,10 +368,13 @@ void SpriteView::initNewFrame()
     }
 }
 
-//Deletes the Frame that the user is currently using
+/*
+ * Deletes the Frame that the user is currently using
+ */
 void SpriteView::deleteCurrFrame()
 {
-    if(ui->deleteButton->isEnabled()){
+    if(ui->deleteButton->isEnabled())
+    {
         int newIndex = getCurrentFrameIndex();
         ui->framesTable->removeRow(getCurrentFrameIndex());
         frameCount--;

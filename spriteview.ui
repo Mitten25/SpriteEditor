@@ -729,7 +729,7 @@ SKIN</string>
            <bool>false</bool>
           </property>
           <property name="text">
-           <string>Delete Button</string>
+           <string>Delete Frame</string>
           </property>
          </widget>
         </item>
@@ -781,7 +781,7 @@ SKIN</string>
      <x>0</x>
      <y>0</y>
      <width>913</width>
-     <height>22</height>
+     <height>19</height>
     </rect>
    </property>
    <property name="styleSheet">
