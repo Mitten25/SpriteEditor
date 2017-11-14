@@ -16,11 +16,17 @@ Form::~Form()
     delete ui;
 }
 
+/*
+ * Gets inputed width
+ */
 int Form::getWidth()
 {
     return ui->widthBox->value();
 }
 
+/*
+ * Gets inputed height
+ */
 int Form::getHeight()
 {
     return ui->heightBox->value();

@@ -8,7 +8,6 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
 {
     ui->setupUi(this);
 
-	//tableWidget = ui->tableWidget;
 	// Color for blank background
 	QColor blankColor("white");
 	// Initialize color picker button
@@ -258,16 +257,21 @@ void SpriteView::newFile()
 void SpriteView::duplicateFrame(Frame f)
 {
     QColor prevColor = activeColor;
+    bool eraserWasOn = eraser;
     for(int y = 0; y < f.row; y++)
     {
         for(int x = 0; x < f.column; x++)
         {
+            if(eraser)
+                eraser = false;
             std::tuple<int, int, int, int> color = f.getPixel(x, y);
             QColor frameColor(std::get<0>(color), std::get<1>(color), std::get<2>(color), std::get<3>(color));
             setActiveColor(frameColor);
             colorCell(x, y);
         }
     }
+    if(eraserWasOn)
+        eraser = true;
     setActiveColor(prevColor);
 }
 
@@ -362,7 +366,6 @@ void SpriteView::initNewFrame()
         {
             ui->deleteButton->setEnabled(true);
         }
-        //void sendData(){emit redirectData(edit->text());}
         emit frameCreated(Frame::fromTableWidget(ui->tableWidget));
 
         // Set this to be the current frame(/TableWidget)
@@ -644,6 +647,9 @@ void SpriteView::showOnionSkins()
     }
 }
 
+/*
+ * Used when new frame is added, new frame is clicked on, new file, open file.
+ */
 void SpriteView::hideOnionSkins()
 {
     for(int i = 0; i < 3; i++)
@@ -806,8 +812,4 @@ SpriteView::~SpriteView()
     cleanUp();
     delete timer;
     delete ui;
-}
-
-void SpriteView::on_drawButton_clicked()
-{
 }

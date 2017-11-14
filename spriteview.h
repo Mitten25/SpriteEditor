@@ -59,7 +59,7 @@ private slots:
     void updatePrevImages(QVector<QImage> images);
     void changeFPS(int);
     void showOnionSkins();
-    void on_drawButton_clicked();
+    //void on_drawButton_clicked();
     void duplicateFrame(Frame f);
 
 private:

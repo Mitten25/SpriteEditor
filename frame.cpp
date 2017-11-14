@@ -2,6 +2,9 @@
 
 using namespace std;
 
+/*
+ * Frame backing with dimensions and color
+ */
 Frame::Frame(int height, int width)
 {
     row = height;
@@ -25,31 +28,49 @@ Frame::Frame()
 
 }
 
+/*
+ * Gets pixel at coordinates
+ */
 tuple<int, int, int, int> Frame::getPixel(int x, int y)
 {
     return pixels[x][y];
 }
 
+/*
+ * Sets pixel at coodinates
+ */
 void Frame::setPixel(int x, int y)
 {
     pixels[x][y] = color;
 }
 
+/*
+ * Erase pixels at coordinates
+ */
 void Frame::erasePixel(int x, int y)
 {
     pixels[x][y] = std::tuple<int, int, int, int> (255, 255, 255, 0);
 }
 
+/*
+ * Sets color
+ */
 void Frame::setColor(std::tuple <int, int, int, int> c)
 {
     color = c;
 }
 
+/*
+ * Gets color
+ */
 std::tuple <int, int, int, int> Frame::getColor()
 {
     return color;
 }
 
+/*
+ * Gets properties of table widgets and returns as a Frame type
+ */
 Frame Frame::fromTableWidget(QTableWidget* tableWidget)
 {
     int rows = tableWidget->rowCount();
@@ -71,6 +92,9 @@ Frame Frame::fromTableWidget(QTableWidget* tableWidget)
     return frame;
 }
 
+/*
+ * String of pixel color properties
+ */
 QString Frame::toString()
 {
     QString result;
@@ -90,6 +114,9 @@ QString Frame::toString()
     return result;
 }
 
+/*
+ * Gets size dimension of frame
+ */
 std::tuple<int,int> Frame::getSize()
 {
     std::tuple<int,int> temp(row, column);

@@ -7,6 +7,9 @@ Model::Model(QObject *parent) : QObject (parent)
 
 }
 
+/*
+ * Used when new frame is made (button click, new file, open file)
+ */
 void Model::newFrame(int height, int width)
 {
     Frame temp(height, width);
@@ -19,6 +22,9 @@ void Model::newFrame(int height, int width)
     }
 }
 
+/*
+ * Used to remove frame when delete frame is clicked
+ */
 void Model::deleteFrame()
 {
     if (frames.size() > 1)
@@ -27,11 +33,17 @@ void Model::deleteFrame()
     }
 }
 
+/*
+ * Used when save is clicked
+ */
 void Model::saveFrame()
 {
     emit getFrame(frames);
 }
 
+/*
+ * Used to clear and reset frames when new file or open file is done
+ */
 void Model::resetFrame()
 {
     frames.clear();
@@ -42,6 +54,9 @@ void Model::resetFrame()
     speed = 0;
 }
 
+/*
+ * Exports .gif image with speed of preview
+ */
 void Model::exportGif(QString file_name, int rows, int columns)
 {
     int tempSpeed;
@@ -60,12 +75,18 @@ void Model::exportGif(QString file_name, int rows, int columns)
     file.save(file_name);
 }
 
+/*
+ * Sets current frame index
+ */
 void Model::currentFrame(int x)
 {
     currFrame = x;
     dupFrame = currFrame;
 }
 
+/*
+ * Duplicates frame in vector
+ */
 void Model::duplicate()
 {
     if (frames.size() > 0)
@@ -75,6 +96,9 @@ void Model::duplicate()
     }
 }
 
+/*
+ * Converts frames to images when exporting gif and for preview.
+ */
 QVector<QImage> Model::framesToImages(int rows, int columns)
 {
     QVector<QImage> images;
@@ -98,6 +122,9 @@ QVector<QImage> Model::framesToImages(int rows, int columns)
     return images;
 }
 
+/*
+ * Used for paint bucket to color area
+ */
 void Model::colorSection(int mult, QImage *image, int row, int column, QRgb value)
 {
     int finalX = row*mult + mult;
@@ -111,6 +138,9 @@ void Model::colorSection(int mult, QImage *image, int row, int column, QRgb valu
     }
 }
 
+/*
+ * Check if on bucket or on draw
+ */
 void Model::paintCommand(int x, int y) {
     if (bucket == true)
     {
@@ -140,17 +170,26 @@ void Model::setFramePixel(int x, int y)
     emit colorThisPixel(x, y);
 }
 
+/*
+ * Sets color of current frame
+ */
 void Model::setColor(tuple<int, int, int, int> c)
 {
     frames[currFrame].setColor(c);
 }
 
+/*
+ * Sends images to preview
+ */
 void Model::updatePreview()
 {
     if(frames.length()>0)
         emit getImages(framesToImages(std::get<0>(frames[0].getSize()), std::get<1>(frames[0].getSize())));
 }
 
+/*
+ * Updates speed for .gif
+ */
 void Model::updateSpeed(int pace)
 {
     speed = pace;
