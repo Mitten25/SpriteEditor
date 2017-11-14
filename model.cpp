@@ -44,11 +44,13 @@ void Model::resetFrame()
 
 void Model::exportGif(QString file_name, int rows, int columns)
 {
+    int tempSpeed;
     if(speed == 0)
     {
-        speed = 1;
+        tempSpeed = 1000;
     }
-    int tempSpeed = -1*(1/speed);
+    else
+        tempSpeed = speed;
     QGifImage file(file_name);
     QVector<QImage> images = framesToImages(rows, columns);
     for(int i = 0; i < images.length(); i++)
