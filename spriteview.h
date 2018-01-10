@@ -61,6 +61,10 @@ private slots:
     void showOnionSkins();
     //void on_drawButton_clicked();
     void duplicateFrame(Frame f);
+    void drawToolOn();
+    void eraserToolOn();
+    void bucketToolOn();
+    void onionToolOn();
 
 private:
     Ui::SpriteView *ui;
@@ -81,6 +85,7 @@ private:
     QStackedLayout *stackedLayout;
     QTableWidget *onionTables[3];
     QResizeEvent *triggerResizer;
+    bool onionTablesOn;
 
     void initMainDrawBoxItems(int, int);
     void initFrameItem(QTableWidget *newFrame);
@@ -95,6 +100,7 @@ private:
     void hideOnionSkins();
     void resizeEvent(QResizeEvent* event);
     void triggerResizeEvent();
+    void unhighlightButtons();
 };
 
 #endif // SPRITEVIEW_H

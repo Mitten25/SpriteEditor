@@ -19,8 +19,11 @@ class Form : public QDialog
 public:
     explicit Form(QWidget *parent = 0);
     ~Form();
+    int width;
+    int height;
     int getWidth();
     int getHeight();
+    void setSize();
 
 private slots:
 

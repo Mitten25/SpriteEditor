@@ -7,7 +7,7 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
     ui(new Ui::SpriteView)
 {
     ui->setupUi(this);
-
+    this->setFixedSize(this->size());
 	// Color for blank background
 	QColor blankColor("white");
 	// Initialize color picker button
@@ -15,8 +15,8 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
     ui->colorButton->setStyleSheet(COLOR_STYLE.arg(startColor.name()));
     activeColor = startColor;
 
-    rows_ = 8;
-    columns_ = 8;
+    rows_ = 0;
+    columns_ = 0;
     frameCount = 0;
     currentPrev= 0;
     *onionTables = {NULL};
@@ -24,6 +24,25 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
     {
         onionTables[i] = NULL;
     }
+    onionTablesOn = false;
+
+    //Button icons
+    QPixmap penIcon("../SpriteEditor/Assets/penIcon.png");
+    ui->drawButton->setIconSize(QSize(48,48));
+    ui->drawButton->setIcon(penIcon.scaled(48, 48, Qt::IgnoreAspectRatio, Qt::FastTransformation));
+
+    QPixmap bucketIcon("../SpriteEditor/Assets/bucketIcon.png");
+    ui->bucketButton->setIconSize(QSize(48,48));
+    ui->bucketButton->setIcon(bucketIcon.scaled(48, 48, Qt::IgnoreAspectRatio, Qt::FastTransformation));
+
+    QPixmap eraserIcon("../SpriteEditor/Assets/eraserIcon.png");
+    ui->eraseButton->setIconSize(QSize(48,48));
+    ui->eraseButton->setIcon(eraserIcon.scaled(48, 48, Qt::IgnoreAspectRatio, Qt::FastTransformation));
+
+    QPixmap onionIcon("../SpriteEditor/Assets/onionIcon.png");
+    ui->onionButton->setIconSize(QSize(48,48));
+    ui->onionButton->setIcon(onionIcon.scaled(48, 48, Qt::IgnoreAspectRatio, Qt::FastTransformation));
+
     // Short Cuts
     QShortcut *save = new QShortcut(QKeySequence("Ctrl+S"), this);
     connect(save, SIGNAL(activated()), &model, SLOT(saveFrame()));
@@ -91,12 +110,6 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
     connect(this, SIGNAL(exportGifSig(QString, int, int)), &model, SLOT(exportGif(QString, int, int)));
     connect(this, SIGNAL(updateSpeed(int)), &model, SLOT(updateSpeed(int)));
 
-    // Button
-    connect(ui->drawButton, SIGNAL(clicked(bool)), &model, SLOT(drawToolOn()));
-    connect(ui->eraseButton, SIGNAL(clicked(bool)), &model, SLOT(eraserToolOn()));
-    connect(&model, SIGNAL(eraserTurnOn(bool)), this, SLOT(eraserOn(bool)));
-    connect(ui->bucketButton, SIGNAL(clicked(bool)), &model, SLOT(bucketToolOn()));
-
     // Create Frame in Model
     connect(this, SIGNAL(createFrame(int,int)), &model, SLOT(newFrame(int,int)));
     connect(this, SIGNAL(currentFrame(int)), &model, SLOT(currentFrame(int)));
@@ -116,6 +129,17 @@ SpriteView::SpriteView(Model& model, QWidget *parent) :
 
     //Onion Skinning
     connect(ui->onionButton, SIGNAL(clicked(bool)), this, SLOT(showOnionSkins()));
+
+    // Button
+    connect(ui->drawButton, SIGNAL(clicked(bool)), &model, SLOT(drawToolOn()));
+    connect(ui->eraseButton, SIGNAL(clicked(bool)), &model, SLOT(eraserToolOn()));
+    connect(&model, SIGNAL(eraserTurnOn(bool)), this, SLOT(eraserOn(bool)));
+    connect(ui->bucketButton, SIGNAL(clicked(bool)), &model, SLOT(bucketToolOn()));
+
+    connect(ui->drawButton, SIGNAL(clicked(bool)), this, SLOT(drawToolOn()));
+    connect(ui->eraseButton, SIGNAL(clicked(bool)), this, SLOT(eraserToolOn()));
+    connect(ui->bucketButton, SIGNAL(clicked(bool)), this, SLOT(bucketToolOn()));
+    connect(ui->onionButton, SIGNAL(clicked(bool)), this, SLOT(onionToolOn()));
 }
 
 /*
@@ -239,6 +263,7 @@ void SpriteView::newFile()
     Form popup;
     if(popup.exec() == QDialog::Accepted)
     {
+        popup.setSize();
         rows_ = popup.getHeight();
         columns_ = popup.getWidth();
         if(onionTables[0] != NULL)
@@ -248,6 +273,7 @@ void SpriteView::newFile()
         // Makes sure the color is saved for each new file
         std::tuple<int,int,int,int> currentColor(activeColor.red(), activeColor.green(), activeColor.blue(), activeColor.alpha());
         emit pixelColor(currentColor);
+        drawToolOn();
     }
 }
 
@@ -335,6 +361,7 @@ void SpriteView::initMainDrawBoxItems(int row, int column)
             ui->tableWidget->setItem(r, c, new QTableWidgetItem);
 		}
     }
+    ui->tableWidget->setFixedSize(700,700);
 }
 
 /*
@@ -345,6 +372,7 @@ void SpriteView::initNewFrame()
     if(ui->addFrameButton->isEnabled() || ui->duplicateButton->isEnabled())
     {
         hideOnionSkins();
+        onionToolOn();
         QTableWidgetItem *newRow = new QTableWidgetItem();
         ui->framesTable->setRowCount(frameCount+1);
         ui->framesTable->setColumnCount(1);
@@ -549,6 +577,7 @@ void SpriteView::onFrameSelected(QTableWidgetItem *item)
 	currentTableWidget = parent;
     hideOnionSkins();
     emit currentFrame(getCurrentFrameIndex());
+    onionToolOn();
 }
 
 /*
@@ -625,6 +654,7 @@ void SpriteView::showOnionSkins()
         {
             if(currentFrameI != 0)
             {
+                onionTablesOn = true;
                 int j = 0;
                 int i = currentFrameI-1;
                 while( i >= 0 && i != currentFrameI-4)//for(int i= currentFrameI-1; 0 <= i; i--)
@@ -652,6 +682,7 @@ void SpriteView::showOnionSkins()
  */
 void SpriteView::hideOnionSkins()
 {
+    onionTablesOn = false;
     for(int i = 0; i < 3; i++)
     {
         if(onionTables[i] != NULL)
@@ -677,6 +708,9 @@ void SpriteView::initOnionTables()
         onionTables[i]->setColumnCount(columns_);
         onionTables[i]->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
         onionTables[i]->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+        //onionTables[i]->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
+        //onionTables[i]->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
+        onionTables[i]->setFixedSize(700,700);
         onionTables[i]->verticalHeader()->setVisible(false);
         onionTables[i]->horizontalHeader()->setVisible(false);
         onionTables[i]->setObjectName("onionTable"+QString::number(i));
@@ -710,11 +744,54 @@ int SpriteView::getCurrentFrameIndex()
     return currentFrameIndex;
 }
 
+void SpriteView::unhighlightButtons()
+{
+    ui->drawButton->setStyleSheet("background: #1f1f1f;");
+    ui->bucketButton->setStyleSheet("background: #1f1f1f;");
+    ui->eraseButton->setStyleSheet("background: #1f1f1f;");
+}
+
+void SpriteView::drawToolOn()
+{
+    if(rows_ != 0)
+    {
+        unhighlightButtons();
+    ui->drawButton->setStyleSheet("background: rgb(15,15,15);");
+    }
+}
+
+void SpriteView::eraserToolOn()
+{
+    if(rows_ != 0)
+    {
+    unhighlightButtons();
+    ui->eraseButton->setStyleSheet("background: rgb(15,15,15);");
+    }
+}
+void SpriteView::bucketToolOn()
+{
+    if(rows_ != 0)
+    {
+    unhighlightButtons();
+    ui->bucketButton->setStyleSheet("background: rgb(15,15,15);");
+    }
+}
+void SpriteView::onionToolOn()
+{
+    if(rows_ != 0 && onionTablesOn == true)
+    {
+        ui->onionButton->setStyleSheet("background: rgb(15,15,15);");
+    }
+    else if(rows_ != 0 && onionTablesOn == false)
+    {
+        ui->onionButton->setStyleSheet("background: #1f1f1f;");
+    }
+}
 /*
  * Used to resize main drawing table and onion skinning tables when user resizes.
  */
 void SpriteView::resizeEvent(QResizeEvent* event)
-{
+{/*
     if(columns_>rows_)
     {
         int ratio = ceil((double)rows_*(ui->tableWidget->width()/columns_));
@@ -743,7 +820,7 @@ void SpriteView::resizeEvent(QResizeEvent* event)
             }
         }
     }
-    event->isAccepted();
+    event->isAccepted();*/
 }
 
 /*
